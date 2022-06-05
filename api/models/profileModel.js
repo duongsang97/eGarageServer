@@ -10,6 +10,7 @@ const Profile = mongoose.Schema(
     email:  { type: String}, 
     numberPhone:  { type: String}, 
     address: { type: Object}, 
+    birthday: { type: String}, 
   },
   { versionKey: false, timestamps: true }
 );
