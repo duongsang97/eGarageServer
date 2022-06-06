@@ -6,7 +6,7 @@ module.exports = {
     whitelist:["http://localhost:8080", "https://localhost:8081"],
     serverType: 'DEV',
     appConfig: {
-      port: 5000,
+      port: 3000,
       redis: { HOST: "localhost", PORT: 6379 },
     },
   };

@@ -23,8 +23,9 @@ app.disable("x-powered-by");
 app.use(bodyParser.urlencoded({extended: true}));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
-app.listen(config.appConfig.port);
-console.log("Server Boarding House Running On: " + config.appConfig.port);
+let usePort = process.env.PORT||config.appConfig.port;
+app.listen(usePort);
+console.log("Server Boarding House Running On: " + usePort);
 //
 
 app.use("/api/v1/", router);
