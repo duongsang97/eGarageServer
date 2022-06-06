@@ -35,6 +35,8 @@ app.use("/", (req, res) => {
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database.url, {
     keepAlive: true,
+    serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 5 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
 }).then(() => {
     console.log("Successfully connected to the database");
 }).catch(err => {
