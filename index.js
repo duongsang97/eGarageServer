@@ -2,6 +2,7 @@ var express = require("express");
 const helmet = require("helmet"); // Security Http Request
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose"); // Connect Mongodb
+const bytes = require('bytes');
 //mongoose.set("useCreateIndex", true);
 var app = express(helmet());
 var cors = require("cors");
@@ -20,7 +21,7 @@ app.use(cors(corsOptions));
 //This overrides the default error handler, and must be called _last_ on the app
 app.disable("x-powered-by");
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true,limit:bytes(50000)}));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 let usePort = process.env.PORT||config.appConfig.port;
