@@ -49,12 +49,19 @@ function AuthenController() {
           try {
             if (req.headers.authorization) {
               const token = (req.headers.authorization).split(" ");
-              const user = jwt.verify(token[1], PUBLIC_KEY).data;
+              const user = jwt.verify(token[1], PRIVITE_KEY).data;
+              if(user){
+                req.user = user;
+                return next();
+              }
+              else{
+                return res.status(401).json({s: 1,msg: `Unauthorized error`});
+              }
             }
-            return next();
+            
           } catch (e) {
             return res.status(401).json({
-              s: 401,
+              s: 1,
               msg: `Unauthorized error`
             });
           }

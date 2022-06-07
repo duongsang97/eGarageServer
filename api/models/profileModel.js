@@ -7,7 +7,7 @@ const Profile = mongoose.Schema(
     firstName: { type: String}, 
     lastName: { type: String},
     gender: { type: Object, default: serverData.gender ,default:serverData.gender[0]}, // mật khẩu
-    email:  { type: String}, 
+    email:  { type: String,index: { unique: true }}, 
     numberPhone:  { type: String}, 
     address: { type: Object}, 
     birthday: { type: String}, 
