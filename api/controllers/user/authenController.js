@@ -18,11 +18,12 @@ function AuthenController() {
           return res.json({ s: 1, msg: "Please enter email and password" });
         } else {
           let data = {};
-          var userLogin = await Users.findOne({email: user.email,password:user.password});
+          var userLogin = await Users.findOne({userName: user.userName,password:user.password});
           if(userLogin){
             var profileByUser = await Profile.findOne({_id: userLogin.profile});
             data = {
               _id: userLogin._id,
+              hostId:userLogin.hostId,
               profile:profileByUser||{}
             }
           }

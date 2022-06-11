@@ -9,6 +9,7 @@ const Users = mongoose.Schema(
     status: { type: Object, enum: serverData.userStatus, default: serverData.userStatus[0]}, // trạng thái tài khoản
     userType:{type: Object,enum : serverData.userType}, // loại tài khoản
     profile: { type: mongoose.Types.ObjectId, ref: 'g_Profile' ,immutable: true}, // liên kêt với profile
+    hostId: { type: String, ref: 'g_User' }, // liên kêt với tài khoản chủ, nếu null --> chủ
   },
   { versionKey: false, timestamps: true }
 );

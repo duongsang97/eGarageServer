@@ -1,9 +1,10 @@
 "use strict";
 const mongoose = require("mongoose");
-const serverData = require("../data/serverData");
+const serverData = require("../../data/serverData");
 const Garage = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
+    code:{ type: String, index: { unique: true }}, // mã 
     name: { type: String },
     address: { type: Object}, // địa chỉ
     numberPhone: { type: String },
