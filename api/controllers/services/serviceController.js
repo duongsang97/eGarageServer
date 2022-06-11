@@ -82,7 +82,7 @@ function ServiceController() {
                 return Service.findById(req.body._id).exec().then((result)=>{
                     if(result){
                         // xác định có phải service cate global hay ko?
-                        if((result.ofGarage=={} || !result.ofGarage) && result.hostId != req.user._id){
+                        if((Object.entries(result.ofGarage).length ==0 || !result.ofGarage) && result.hostId != req.user._id){
                             return res.json({ s: 1, msg: "Không có quyền",data:null});
                         }
                         else{
