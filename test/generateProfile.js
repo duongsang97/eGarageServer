@@ -3,14 +3,78 @@ const config = require("../configs/server.config");
 const serverData = require("../api/data/serverData");
 const User = require("../api/models/userModel").Users;
 const Profile = require("../api/models/profileModel").Profile;
+const Menu = require("../api/models/menuModel").Menu;
 mongoose.Promise = global.Promise;
+const menu =[
+  {
+    "code": "dashboard",
+    "name": "Dashboard",
+    "router": "home/dashboard",
+    "icon": "fa fas-home",
+    "enable": true,
+    "apis": [
+      {
+        "code": "GARAGE_GET",
+        "url": "/garage",
+        "method": "get",
+        "enable": true
+      }
+    ],
+    "children": []
+  },
+  {
+    "code": "store",
+    "name": "Kho",
+    "router": "home/store",
+    "icon": "fa fas-store",
+    "enable": true,
+    "apis": [
+      {
+        "url": "/store",
+        "method": "get",
+        "enable": true
+      },
+      {
+        "url": "/store",
+        "method": "post",
+        "enable": true
+      }
+    ],
+    "children": [
+      {
+        "code": "store",
+        "name": "Kho",
+        "router": "home/store",
+        "icon": "fa fas-store",
+        "enable": true,
+        "apis": [
+          {
+            "code": "STORE_GET",
+            "url": "/store",
+            "method": "get",
+            "enable": true
+          },
+          {
+            "code": "STORE_POST",
+            "url": "/store",
+            "method": "post",
+            "enable": true
+          }
+        ]
+      }
+    ]
+  }
+];
 mongoose
   .connect(config.database.url, {
     useNewUrlParser: true,
   })
   .then(() => {
     console.log("Successfully connected to the database");
-    createSystemUser();
+    //createSystemUser();
+    menu.forEach((item)=>{
+      createMenu(item);
+    });
   })
   .catch(err => {
     console.log("Could not connect to the database. Exiting now...", err);
@@ -31,4 +95,9 @@ mongoose
         profile: Response._id,
       })
     });
+  }
+
+  function createMenu(data) {
+    Menu.create(data).then(Response => {
+      });
   }

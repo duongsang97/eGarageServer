@@ -5,6 +5,8 @@ const LoginController = require("../controllers/user/authenController");
 const garageController = require("../controllers/garages/garageController");
 const groupCustomerController = require("../controllers/crm/groupCustomerController");
 const customerInfoController = require("../controllers/crm/customerInfoController");
+const serviceCateController = require("../controllers/services/serviceCateController");
+const serviceController = require("../controllers/services/serviceController");
 
 router.post("/login", LoginController.doLogin);
 router.use(LoginController.checkLogin);
@@ -20,6 +22,8 @@ router.route('/customerinfo').get(customerInfoController.list).post(customerInfo
 .put(customerInfoController.update).delete(customerInfoController.delete);
 router.route('/customerinfo/exportexcel').get(customerInfoController.exportExcel);
 router.route('/customerinfo/exporttemplateexcel').get(customerInfoController.exportTemplateExcel);
+router.route('/servicecate').get(serviceCateController.list).post(serviceCateController.create).put(serviceCateController.update);
+router.route('/service').get(serviceController.list).post(serviceController.create).put(serviceController.update);
 
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});
 module.exports = router;

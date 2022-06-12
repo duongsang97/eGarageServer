@@ -1,5 +1,5 @@
 "use strict";
-const Garage = require("../../models/garageModel").Garage;
+const Garage = require("../../models/garages/garageModel").Garage;
 function ProfileController() {
   return {
     /** @memberOf ServiceManagerController
@@ -12,7 +12,7 @@ function ProfileController() {
         try{
             if(req.user){
                 let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
-                let page = req.params.page || 1; // trang
+                let page = req.query.page || 1; // trang
                 Garage.find({
                     $and: [
                         { "createdBy":req.user._id,"recordStatus":1},
@@ -22,7 +22,7 @@ function ProfileController() {
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                       }
-                        return res.json({ s: 0, msg: "Thành công",data:items });
+                        return res.json({ s: 0, msg: "Thành công",data:items||[],listCount:count});
                     });
                   });
             }
