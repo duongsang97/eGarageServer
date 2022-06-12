@@ -15,5 +15,5 @@ module.exports = {
         {code:"host",name:"Chủ garage"},
     ],
     recordStatus:[0,1],
-    pathExceltmp: "api/excel/tmp"
+    pathExceltmp: "excel/tmp"
 };
