@@ -1,7 +1,9 @@
 "use strict";
 const GroupCustomer = require("../../models/crm/groupCustomerModel").GroupCustomer;
 var Excel = require('exceljs');
+var formidable = require('formidable');
 const serverData = require("../../data/serverData");
+const fs = require('fs');
 
 function GroupCustomerController() {
     return {
@@ -156,9 +158,9 @@ function GroupCustomerController() {
                                 listcol.push({ code: col - 1, value: 10 });
                                 worksheet.getCell(rowtitle, col++).value = "Yêu cầu \n(0: Thêm; 1: Sửa; -1: Xóa)";
                                 listcol.push({ code: col - 1, value: 15 });
-                                worksheet.getCell(rowtitle, col++).value = "Mã garage";
+                                worksheet.getCell(rowtitle, col++).value = "Mã chủ sở hữu";
                                 listcol.push({ code: col - 1, value: 15 });
-                                worksheet.getCell(rowtitle, col++).value = "Tên Garage";
+                                worksheet.getCell(rowtitle, col++).value = "Tên chủ sở hữu";
                                 listcol.push({ code: col - 1, value: 30 });
                                 worksheet.getCell(rowtitle, col++).value = "Mã hệ thống";
                                 listcol.push({ code: col - 1, value: 15 });
@@ -176,8 +178,8 @@ function GroupCustomerController() {
                                     col = 1;
                                     worksheet.getCell(rowindex, col++).value = index + 1;
                                     worksheet.getCell(rowindex, col++).value = "";
-                                    worksheet.getCell(rowindex, col++).value = (el.garage || {}).code || '';
-                                    worksheet.getCell(rowindex, col++).value = (el.garage || {}).name || '';
+                                    worksheet.getCell(rowindex, col++).value = (el.global || {}).code || '';
+                                    worksheet.getCell(rowindex, col++).value = (el.global || {}).name || '';
                                     worksheet.getCell(rowindex, col++).value = GroupCustomer.ObjectId(el._id);
                                     worksheet.getCell(rowindex, col++).value = el.name;
                                     worksheet.getCell(rowindex, col++).value = el.target;
@@ -242,9 +244,9 @@ function GroupCustomerController() {
                     listcol.push({ code: col - 1, value: 10 });
                     worksheet.getCell(rowtitle, col++).value = "Yêu cầu \n(0: Thêm; 1: Sửa; -1: Xóa)";
                     listcol.push({ code: col - 1, value: 15 });
-                    worksheet.getCell(rowtitle, col++).value = "Mã garage";
+                    worksheet.getCell(rowtitle, col++).value = "Mã chủ sở hữu";
                     listcol.push({ code: col - 1, value: 15 });
-                    worksheet.getCell(rowtitle, col++).value = "Tên Garage";
+                    worksheet.getCell(rowtitle, col++).value = "Tên chủ sở hữu";
                     listcol.push({ code: col - 1, value: 30 });
                     worksheet.getCell(rowtitle, col++).value = "Mã hệ thống";
                     listcol.push({ code: col - 1, value: 15 });
@@ -297,6 +299,33 @@ function GroupCustomerController() {
                     workbook.xlsx.writeFile(filename);
                     return res.json({ s: 0, msg: "Thành công!", filename });
 
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
+
+        importExcel: (req, res) => {
+            try {
+                if (req.user) {
+                    var form = new formidable.IncomingForm();
+                    form.parse(req, function (err, fields, files) {
+                        console.log(files)
+                        var oldpath = files.file.filepath;
+                        var newpath = serverData.pathExceltmp + '/upload/' + new Date().getTime() + '_'+ files.file.originalFilename;
+                        fs.copyFile(oldpath, newpath, function (err) {
+                            if (err) {
+                                res.json({ s: 1, msg:err, data: null });
+                            }
+                            else{
+                                res.json({ s: 0, msg: "Thành công!", data: null });
+                            }
+                        });
+                    });
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });

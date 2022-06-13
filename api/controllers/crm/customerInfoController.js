@@ -156,9 +156,9 @@ function CustomerInfoController() {
                                 listcol.push({ code: col - 1, value: 10 });
                                 worksheet.getCell(rowtitle, col++).value = "Yêu cầu \n(0: Thêm; 1: Sửa; -1: Xóa)";
                                 listcol.push({ code: col - 1, value: 15 });
-                                worksheet.getCell(rowtitle, col++).value = "Mã garage";
+                                worksheet.getCell(rowtitle, col++).value = "Mã chủ sở hữu";
                                 listcol.push({ code: col - 1, value: 15 });
-                                worksheet.getCell(rowtitle, col++).value = "Tên Garage";
+                                worksheet.getCell(rowtitle, col++).value = "Tên chủ sở hữu";
                                 listcol.push({ code: col - 1, value: 30 });
                                 worksheet.getCell(rowtitle, col++).value = "Mã hệ thống";
                                 listcol.push({ code: col - 1, value: 15 });
@@ -188,8 +188,8 @@ function CustomerInfoController() {
                                     col = 1;
                                     worksheet.getCell(rowindex, col++).value = index + 1;
                                     worksheet.getCell(rowindex, col++).value = "";
-                                    worksheet.getCell(rowindex, col++).value = (el.garage || {}).code || '';
-                                    worksheet.getCell(rowindex, col++).value = (el.garage || {}).name || '';
+                                    worksheet.getCell(rowindex, col++).value = (el.global || {}).code || '';
+                                    worksheet.getCell(rowindex, col++).value = (el.global || {}).name || '';
                                     worksheet.getCell(rowindex, col++).value = CustomerInfo.ObjectId(el._id);
                                     worksheet.getCell(rowindex, col++).value = el.name;
                                     worksheet.getCell(rowindex, col++).value = el.phoneNumber;
@@ -260,9 +260,9 @@ function CustomerInfoController() {
                     listcol.push({ code: col - 1, value: 10 });
                     worksheet.getCell(rowtitle, col++).value = "Yêu cầu \n(0: Thêm; 1: Sửa; -1: Xóa)";
                     listcol.push({ code: col - 1, value: 15 });
-                    worksheet.getCell(rowtitle, col++).value = "Mã garage";
+                    worksheet.getCell(rowtitle, col++).value = "Mã chủ sở hữu";
                     listcol.push({ code: col - 1, value: 15 });
-                    worksheet.getCell(rowtitle, col++).value = "Tên Garage";
+                    worksheet.getCell(rowtitle, col++).value = "Tên chủ sở hữu";
                     listcol.push({ code: col - 1, value: 30 });
                     worksheet.getCell(rowtitle, col++).value = "Mã hệ thống";
                     listcol.push({ code: col - 1, value: 15 });

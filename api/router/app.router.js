@@ -17,6 +17,7 @@ router.route('/groupcustomer').get(groupCustomerController.list).post(groupCusto
 .put(groupCustomerController.update).delete(groupCustomerController.delete);
 router.route('/groupcustomer/exportexcel').get(groupCustomerController.exportExcel);
 router.route('/groupcustomer/exporttemplateexcel').get(groupCustomerController.exportTemplateExcel);
+router.route('/groupcustomer/importexcel').post(groupCustomerController.importExcel);
 
 router.route('/customerinfo').get(customerInfoController.list).post(customerInfoController.create)
 .put(customerInfoController.update).delete(customerInfoController.delete);
