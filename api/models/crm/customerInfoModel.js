@@ -9,7 +9,7 @@ const CustomerInfo = mongoose.Schema(
     name: { type: String}, // Tên khách hàng
     phoneNumber: { type: String}, //SDT
     email: { type: String}, //email
-    garage: { type: Object}, // thuộc garage nào
+    global : { type: Object}, // thuộc global  nào
     group: { type: Object}, // nhóm KH
     birthday: { type: Date}, //ngày sinh
     address: { type: String}, // địa chỉ
