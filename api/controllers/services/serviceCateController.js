@@ -43,12 +43,15 @@ function ServiceCateController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
-    create:(req, res) => {
+    create: async (req, res) => {
         try{
-            if(req.user && (req.body && req.body.hasOwnProperty("code"))){
+            if(req.user){
                 req.body.createdBy = ServiceCate.ObjectId(req.user._id);
                 req.body.updatedBy = ServiceCate.ObjectId(req.user._id);
                 req.body.ofHost = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                if(!req.body.code){
+                    req.body.code = await ServiceCate.GenerateKeyCode();
+                }
                 ServiceCate.create(req.body, function (err, small) {
                     if (err){
                         let errMsg ="";
@@ -75,7 +78,7 @@ function ServiceCateController() {
     },
     update: (req, res) => {
         try{
-            if(req.user && (req.body && req.body.hasOwnProperty("code"))){
+            if(req.user && (req.body)){
                 req.body.updatedBy = ServiceCate.ObjectId(req.user._id);
                 req.body.ofHost = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật

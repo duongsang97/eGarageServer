@@ -1,8 +1,8 @@
 "use strict";
-const Service = require("../../models/services/serviceModel").Service;
-function ServiceController() {
+const ProductCate = require("../../../models/storeManage/productCate/productCateModel").ProductCate;
+function  ProductCateController() {
   return {
-    /** @memberOf ServiceManagerController
+    /** @memberOf ProductCateManagerController
      * @description List all building
      * @param req
      * @param res
@@ -16,10 +16,10 @@ function ServiceController() {
                 let hostId= req.user.hostId||req.user._id;
                 let garageSelected =req.query.garageSelected||"";
                 let keyword =req.query.keyword||"";
-                Service.find({
+                ProductCate.find({
                     $and: [
                         {
-                            $or: [{"ofGarage":{}},{"ofGarage.code":garageSelected}],
+                            $or: [{"ofGarage":{}},{"ofGarage":null},{"ofGarage.code":garageSelected}],
                         },
                         {
                             $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
@@ -27,7 +27,7 @@ function ServiceController() {
                         {"recordStatus":1, "hostId":hostId}
                     ]
                 }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
-                    Service.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                    ProductCate.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                       }
@@ -47,13 +47,13 @@ function ServiceController() {
     create: async (req, res) => {
         try{
             if(req.user && (req.body)){
-                req.body.createdBy = Service.ObjectId(req.user._id);
-                req.body.updatedBy = Service.ObjectId(req.user._id);
-                req.body.hostId = Service.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.createdBy = ProductCate.ObjectId(req.user._id);
+                req.body.updatedBy = ProductCate.ObjectId(req.user._id);
+                req.body.hostId = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 if(!req.body.code){
-                    req.body.code = await Service.GenerateKeyCode();
+                    req.body.code = await ProductCate.GenerateKeyCode();
                 }
-                Service.create(req.body, function (err, small) {
+                ProductCate.create(req.body, function (err, small) {
                     if (err){
                         let errMsg ="";
                         if(err.code === 11000){
@@ -80,17 +80,17 @@ function ServiceController() {
     update: (req, res) => {
         try{
             if(req.user && (req.body && req.body.hasOwnProperty("code"))){
-                req.body.updatedBy = Service.ObjectId(req.user._id);
-                req.body.ofHost = Service.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.updatedBy = ProductCate.ObjectId(req.user._id);
+                req.body.ofHost = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
-                return Service.findById(req.body._id).exec().then((result)=>{
+                return ProductCate.findById(req.body._id).exec().then((result)=>{
                     if(result){
-                        // xác định có phải service cate global hay ko?
-                        if((Object.entries(result.ofGarage).length ==0 || !result.ofGarage) && result.hostId != req.user._id){
+                        // xác định có phải ProductCate cate global hay ko?
+                        if((!result.ofGarage || Object.entries(result.ofGarage).length ==0) && result.hostId != req.user._id){
                             return res.json({ s: 1, msg: "Không có quyền",data:null});
                         }
                         else{
-                            Service.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
+                            ProductCate.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
                                 if (err){
                                     let errMsg =err;
                                     return res.json({ s: 1, msg: errMsg,data:null });
@@ -120,4 +120,4 @@ function ServiceController() {
   };
 }
 
-module.exports = new ServiceController();
+module.exports = new ProductCateController();

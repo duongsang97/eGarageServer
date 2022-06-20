@@ -34,10 +34,13 @@ function ProfileController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
-    create:(req, res) => {
+    create: async (req, res) => {
         try{
             if(req.user && req.body){
                 req.body.createdBy = Garage.ObjectId(req.user._id);
+                if(!req.body.code){
+                    req.body.code = await Garage.GenerateKeyCode();
+                }
                 Garage.create(req.body, function (err, small) {
                     if (err){
                         return res.json({ s: 1, msg: err,data:null });

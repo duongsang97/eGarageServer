@@ -1,10 +1,11 @@
 "use strict";
 const mongoose = require("mongoose");
 const serverData = require("../../data/serverData");
+const randomstring = require("randomstring");
 const Service = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
-    code: { type: String, index: { unique: true }}, // mã 
+    code: { type: String,index: { unique: true }}, // mã 
     name: { type: String}, // tên service
     serviceCate: {type: Object,default:{}}, // thuộc cate nào
     price:{type: Number}, // giá 
@@ -22,7 +23,27 @@ const Service = mongoose.Schema(
 Service.statics.ObjectId = function (id) {
   return mongoose.Types.ObjectId(id);
 };
+Service.statics.GenerateKeyCode = async function (){
+  let countLoop =0;
+  let lengthKey =5;
+  let tempKey = "service_"+randomstring.generate(lengthKey);
+  let tempItem = await _service.findOne({"code":tempKey});
+  while(tempItem){
+    if(countLoop > 10){
+      lengthKey++;
+      countLoop=0;
+    }
+    tempKey = "service_"+randomstring.generate(lengthKey);
+    tempItem = await _service.findOne({"code":tempKey});
+    countLoop++;
+  }
+  return tempKey;
+};
+
 const _service = mongoose.model("g_Service", Service);
+
+
 module.exports = {
     Service: _service,
+
 };
