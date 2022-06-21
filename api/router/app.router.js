@@ -8,6 +8,8 @@ const customerInfoController = require("../controllers/crm/customerInfoControlle
 const serviceCateController = require("../controllers/services/serviceCateController");
 const serviceController = require("../controllers/services/serviceController");
 const productCateController = require("../controllers/storeManage/productCate/productCateController");
+const productController = require("../controllers/storeManage/products/productController");
+const supplierController = require("../controllers/storeManage/suppliers/supplierController");
 const appDataeController = require("../controllers/app/appDataController");
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
@@ -31,6 +33,8 @@ router.route('/service').get(serviceController.list).post(serviceController.crea
 
 // quản lý kho
 router.route('/productcate').get(productCateController.list).post(productCateController.create).put(productCateController.update);
+router.route('/product').get(productController.list).post(productController.create).put(productController.update);
+router.route('/suppliers').get(supplierController.list).post(supplierController.create).put(supplierController.update);
 
 
 // trả về 404 nếu không có trong router
