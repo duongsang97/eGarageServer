@@ -19,7 +19,7 @@ function ServiceCateController() {
                 ServiceCate.find({
                     $and: [
                         {
-                            $or: [{"ofGarage":{}},{"ofGarage.code":garageSelected}],
+                            $or: [{"ofGarage":{}},{"ofGarage":null},{"ofGarage.code":garageSelected}],
                         },
                         {
                             $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
@@ -48,7 +48,7 @@ function ServiceCateController() {
             if(req.user){
                 req.body.createdBy = ServiceCate.ObjectId(req.user._id);
                 req.body.updatedBy = ServiceCate.ObjectId(req.user._id);
-                req.body.ofHost = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 if(!req.body.code){
                     req.body.code = await ServiceCate.GenerateKeyCode();
                 }
