@@ -8,8 +8,9 @@ const customerInfoController = require("../controllers/crm/customerInfoControlle
 const serviceCateController = require("../controllers/services/serviceCateController");
 const serviceController = require("../controllers/services/serviceController");
 const productCateController = require("../controllers/storeManage/productCate/productCateController");
-
+const appDataeController = require("../controllers/app/appDataController");
 router.post("/login", LoginController.doLogin);
+router.route('/appdata').get(appDataeController.list);
 router.use(LoginController.checkLogin);
 router.route('/garage').get(garageController.list).post(garageController.create).put(garageController.update);
 

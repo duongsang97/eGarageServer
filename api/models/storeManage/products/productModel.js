@@ -8,7 +8,9 @@ const Product = mongoose.Schema(
     code: { type: String, index: { unique: true }}, // mã 
     name: { type: String}, // tên 
     ofGarage: {type: Object, default:null}, // thuộc garage nào ---> nếu không có là global 
-    ofManufacturer: {type: Object,default:{"code":"none","name":"none"}}, // thuộc nhà sản xuất nào
+    manufacturer: {type: Object,default:{"code":"none","name":"none"}}, // thuộc nhà sản xuất nào
+    model: {type: String}, // model sản phẩm
+    warrantytime: {type: Object,}, // thời gian bảo hành 
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
