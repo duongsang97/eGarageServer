@@ -9,7 +9,7 @@ const Service = mongoose.Schema(
     name: { type: String}, // tên service
     serviceCate: {type: Object,default:{}}, // thuộc cate nào
     price:{type: Number}, // giá 
-    insurance :{type: Object,default:{}}, // bảo hành {"value":1,"type":{"code":"typeDay","name":"Ngày"}}
+    warrantyTime :{type: Object,default:{}}, // bảo hành {"value":1,"type":{"code":"typeDay","name":"Ngày"}}
     executionTime: {type: Number}, // thời gian thực hiện , tính theo phút
     ofGarage: {type: Object,default:{}}, // thuộc garage nào ---> nếu không có là global 
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
