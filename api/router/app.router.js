@@ -11,6 +11,7 @@ const productCateController = require("../controllers/storeManage/productCate/pr
 const productController = require("../controllers/storeManage/products/productController");
 const supplierController = require("../controllers/storeManage/suppliers/supplierController");
 const appDataeController = require("../controllers/app/appDataController");
+const unitsController = require("../controllers/storeManage/units/unitsController");
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
 router.use(LoginController.checkLogin);
@@ -35,6 +36,7 @@ router.route('/service').get(serviceController.list).post(serviceController.crea
 router.route('/productcate').get(productCateController.list).post(productCateController.create).put(productCateController.update);
 router.route('/product').get(productController.list).post(productController.create).put(productController.update);
 router.route('/suppliers').get(supplierController.list).post(supplierController.create).put(supplierController.update);
+router.route('/units').get(unitsController.list).post(unitsController.create).put(unitsController.update); // đơn vị tính
 
 
 // trả về 404 nếu không có trong router
