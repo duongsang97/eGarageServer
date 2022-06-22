@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 const serverData = require("../../../data/serverData");
 const randomstring = require("randomstring");
-const WareHouseReceipt = mongoose.Schema(
+const Stores = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
@@ -17,26 +17,26 @@ const WareHouseReceipt = mongoose.Schema(
   { versionKey: false, timestamps: true }
 );
 /** @memberOf account */
-WareHouseReceipt.statics.ObjectId = function (id) {
+Stores.statics.ObjectId = function (id) {
   return mongoose.Types.ObjectId(id);
 };
-WareHouseReceipt.statics.GenerateKeyCode = async function (){
+Stores.statics.GenerateKeyCode = async function (){
   let countLoop =0;
   let lengthKey =5;
-  let tempKey = "wareHouseReceipt_"+randomstring.generate(lengthKey);
-  let tempItem = await _wareHouseReceipt.findOne({"code":tempKey});
+  let tempKey = "store_"+randomstring.generate(lengthKey);
+  let tempItem = await _stores.findOne({"code":tempKey});
   while(tempItem){
     if(countLoop > 10){
       lengthKey++;
       countLoop=0;
     }
-    tempKey = "wareHouseReceipt_"+randomstring.generate(lengthKey);
-    tempItem = await _wareHouseReceipt.findOne({"code":tempKey});
+    tempKey = "store_"+randomstring.generate(lengthKey);
+    tempItem = await _stores.findOne({"code":tempKey});
     countLoop++;
   }
   return tempKey;
 };
-const _wareHouseReceipt = mongoose.model("g_wareHouseReceipt", WareHouseReceipt);
+const _stores = mongoose.model("g_store", Stores);
 module.exports = {
-    WareHouseReceipt:  _wareHouseReceipt,
+    Stores: _stores,
 };
