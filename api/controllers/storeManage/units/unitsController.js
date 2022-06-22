@@ -1,5 +1,6 @@
 "use strict";
 const Units = require("../../../models/storeManage/units/unitsModel").Units;
+const ObjectId = require('mongoose').Types.ObjectId;
 function  SupplierController() {
   return {
     /** @memberOf SupplierCateManagerController
@@ -27,7 +28,7 @@ function  SupplierController() {
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                       }
-                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount:count});
+                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
                     });
                   });
             }
@@ -37,6 +38,32 @@ function  SupplierController() {
         }
         catch(ex){
             console.log(ex);
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
+        }
+    },
+    getOne: (req, res) => {
+        try{
+            if(req.user){
+                let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
+                let page = req.query.page || 1; // trang
+                let hostId = Units.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                let keyword = req.query.keyword||"";
+                Units.findOne({
+                    $and: [
+                        {
+                            $or:[{ "_id" : ObjectId.isValid(keyword)?Units.ObjectId(keyword):null},{ "code" : keyword}]
+                        },
+                        {"recordStatus":1, "hostId":hostId}
+                    ]
+                }).then(result=>{
+                    return res.json({ s: 0, msg: "Thành công",data:result||{},listCount:(result||{}).length});
+                });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
+        }
+        catch(ex){
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
@@ -53,7 +80,7 @@ function  SupplierController() {
                     if (err){
                         let errMsg ="";
                         if(err.code === 11000){
-                            errMsg="Trùng mã";
+                            errMsg="Trùng mã hoặc tên";
                         }
                         else{
                             errMsg=err;

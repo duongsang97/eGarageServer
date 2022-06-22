@@ -16,6 +16,7 @@ router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
 router.use(LoginController.checkLogin);
 router.route('/garage').get(garageController.list).post(garageController.create).put(garageController.update);
+router.route('/garage/getOne').get(garageController.getOne);
 
 //crm
 router.route('/groupcustomer').get(groupCustomerController.list).post(groupCustomerController.create)
@@ -30,13 +31,22 @@ router.route('/customerinfo/exporttemplateexcel').get(customerInfoController.exp
 
 // service api
 router.route('/servicecate').get(serviceCateController.list).post(serviceCateController.create).put(serviceCateController.update);
-router.route('/service').get(serviceController.list).post(serviceController.create).put(serviceController.update);
+router.route('/servicecate/getOne').get(serviceCateController.getOne);
 
+router.route('/service').get(serviceController.list).post(serviceController.create).put(serviceController.update);
+router.route('/service/getOne').get(serviceController.getOne);
 // quản lý kho
 router.route('/productcate').get(productCateController.list).post(productCateController.create).put(productCateController.update);
+router.route('/productcate/getOne').get(productCateController.getOne);
+
 router.route('/product').get(productController.list).post(productController.create).put(productController.update);
+router.route('/product/getOne').get(productController.getOne);
+
 router.route('/suppliers').get(supplierController.list).post(supplierController.create).put(supplierController.update);
+router.route('/suppliers/getOne').get(supplierController.getOne);
+
 router.route('/units').get(unitsController.list).post(unitsController.create).put(unitsController.update); // đơn vị tính
+router.route('/units/getOne').get(unitsController.getOne);
 
 
 // trả về 404 nếu không có trong router

@@ -12,8 +12,10 @@ const Garage = mongoose.Schema(
     logo: { type: String },
     description: { type: String },
     images: { type: Array },
-    createdBy: { type: mongoose.Types.ObjectId, ref: 'g_User',immutable: true, select: false}, // liên kêt với profile
-    updatedBy: { type: mongoose.Types.ObjectId, ref: 'g_User'}, // liên kêt với profile
+    hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
+    createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
+    updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
+    note:  { type: String}, // ghi chú 
   },
   { versionKey: false, timestamps: true }
 );

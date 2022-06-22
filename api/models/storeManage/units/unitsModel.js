@@ -6,7 +6,7 @@ const Units = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
-    name: { type: String}, // tên 
+    name: { type: String,index: { unique: true }}, // tên 
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối

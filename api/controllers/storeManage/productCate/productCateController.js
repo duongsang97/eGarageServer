@@ -1,5 +1,6 @@
 "use strict";
 const ProductCate = require("../../../models/storeManage/productCate/productCateModel").ProductCate;
+const ObjectId = require('mongoose').Types.ObjectId;
 function  ProductCateController() {
   return {
     /** @memberOf ProductCateManagerController
@@ -31,7 +32,7 @@ function  ProductCateController() {
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                       }
-                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount:count});
+                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
                     });
                   });
             }
@@ -41,6 +42,32 @@ function  ProductCateController() {
         }
         catch(ex){
             console.log(ex);
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
+        }
+    },
+    getOne: (req, res) => {
+        try{
+            if(req.user){
+                let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
+                let page = req.query.page || 1; // trang
+                let hostId = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                let keyword = req.query.keyword||"";
+                ProductCate.findOne({
+                    $and: [
+                        {
+                            $or:[{ "_id" : ObjectId.isValid(keyword)?ProductCate.ObjectId(keyword):null},{ "code" : keyword}]
+                        },
+                        {"recordStatus":1, "hostId":hostId}
+                    ]
+                }).then(result=>{
+                    return res.json({ s: 0, msg: "Thành công",data:result||{},listCount:(result||{}).length});
+                });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
+        }
+        catch(ex){
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
