@@ -12,6 +12,7 @@ const productController = require("../controllers/storeManage/products/productCo
 const supplierController = require("../controllers/storeManage/suppliers/supplierController");
 const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
+const storesController = require("../controllers/storeManage/stores/storesController");
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
 router.use(LoginController.checkLogin);
@@ -47,6 +48,9 @@ router.route('/suppliers/getOne').get(supplierController.getOne);
 
 router.route('/units').get(unitsController.list).post(unitsController.create).put(unitsController.update); // đơn vị tính
 router.route('/units/getOne').get(unitsController.getOne);
+
+router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update); // thông tin kho
+router.route('/stores/getOne').get(storesController.getOne);
 
 
 // trả về 404 nếu không có trong router

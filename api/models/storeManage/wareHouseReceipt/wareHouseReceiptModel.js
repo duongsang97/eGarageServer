@@ -6,9 +6,16 @@ const WareHouseReceipt = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
-    name: { type: String}, // tên 
-    address: {type: String},
-    ofGarage: {type: Object, default:null}, // thuộc garage nào ---> nếu không có là global 
+    receivingObject: { type: Object,default:{"name":"note","address":"none"}}, // thông tin đối tượng giao hàng
+    supplierObject: {type: String}, // thông tin đối tượng cung cấp
+    info:  {type: String}, // thông tin thêm
+    ofGarage: {type: Object, default:null}, // thông tin xuất từ garage nào
+    receiptFrom:  {type: Object, default:null}, // nhập từ kho nào đó , != null nếu nhập nội bộ
+    totalMoneyNumber: {type: Number}, // tổng tiền bằng số
+    totalMoneyString: {type: String}, // tổng tiền băng chữ
+    voucherNumber :{type: String}, // số chứng tư
+    receiptDate: {type: Date,default: Date.now},
+    receiptDetail: {type:Array,default:[]},// 
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
@@ -40,3 +47,19 @@ const _wareHouseReceipt = mongoose.model("g_wareHouseReceipt", WareHouseReceipt)
 module.exports = {
     WareHouseReceipt:  _wareHouseReceipt,
 };
+
+// {
+//   "OrdinalNumber": 1,
+//   "product": {
+//     "code": "mã sp",
+//     "name": "tên sản phẩm"
+//   },
+//   "unit": {
+//     "code": "type_1",
+//     "name": "kg"
+//   },
+//   "voucherActual": 3,
+//   "actual": 2,
+//   "unitPrice": 12000,
+//   "amount": 24000
+//}
