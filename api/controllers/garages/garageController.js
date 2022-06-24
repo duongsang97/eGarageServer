@@ -65,13 +65,34 @@ function ProfileController() {
     },
     create: async (req, res) => {
         try{
-            if(req.user && req.body){
-                req.body.createdBy = Garage.ObjectId(req.user._id);
-                req.body.hostId = Garage.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
-                if(!req.body.code){
-                    req.body.code = await Garage.GenerateKeyCode();
+            let data = JSON.parse((req.body.data)||"");
+            let files = (req.files &&  req.files.files)?req.files.files:[];
+            let logos = (req.files &&  req.files.logo)?req.files.logo:[];
+            if(req.user && data){
+                data.createdBy = Garage.ObjectId(req.user._id);
+                data.hostId = Garage.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                if(!data.code){
+                    data.code = await Garage.GenerateKeyCode();
                 }
-                Garage.create(req.body, function (err, small) {
+                // xử lý hình ảnh tải lên
+                try{
+                    // xử lý hình ảnh garage
+                    if(files){
+                        data.images =[];
+                        files.forEach(element => {
+                            data.images.push(element.path);
+                        });
+                    }
+                    // xử lý logo
+                    if(logos){
+                        data.logo = logos[0].path;
+                    }
+                }
+                catch(ex){
+                    console.log(ex);
+                }
+
+                Garage.create(data, function (err, small) {
                     if (err){
                         return res.json({ s: 1, msg: err,data:null });
                     }

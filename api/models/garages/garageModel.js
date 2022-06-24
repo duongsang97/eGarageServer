@@ -9,9 +9,9 @@ const Garage = mongoose.Schema(
     name: { type: String },
     address: { type: Object}, // địa chỉ
     numberPhone: { type: String },
-    logo: { type: String },
+    logo: { type: String }, //logo
     description: { type: String },
-    images: { type: Array },
+    images: { type: Array }, // hình ảnh về garage
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối

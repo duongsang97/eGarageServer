@@ -15,7 +15,8 @@ module.exports = {
         {code:"host",name:"Chủ garage"},
     ],
     recordStatus:[0,1],
-    pathExceltmp: "api/excel/tmp",
+    pathFolderExport: "publics/exports",
+    pathFolderUpload: "publics/uploads",
     typeTimeDatas:[{"code":"typeMinute","name":"Phút"},{"code":"typeHour","name":"Giờ"},{"code":"typeDay","name":"Ngày"},{"code":"typeMonth","name":"Tháng"},{"code":"typeYear","name":"Năm"}],
     typeLengthDatas:[{"code":"typekm","name":"Km"},{"code":"typeMile","name":"Mile"}],
 };

@@ -1,5 +1,7 @@
 "use strict";
 const express = require("express");
+const AppData = require("../data/serverData");
+const multer = require('multer');
 const router = express.Router();
 const LoginController = require("../controllers/user/authenController");
 const garageController = require("../controllers/garages/garageController");
@@ -13,10 +15,40 @@ const supplierController = require("../controllers/storeManage/suppliers/supplie
 const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
 const storesController = require("../controllers/storeManage/stores/storesController");
+const dateFormat = require('date-format');
+const fs = require('fs');
+//cấu hình lưu trữ file khi upload xong
+const storage = multer.diskStorage({
+    
+    destination: function (req, file, cb) {
+        const folderNowDate = dateFormat('yyyyMMdd', new Date());
+        let fullFolder = AppData.pathFolderUpload+"/"+folderNowDate;
+      //files khi upload xong sẽ nằm trong thư mục "uploads" này - các bạn có thể tự định nghĩa thư mục này
+      if (!fs.existsSync(fullFolder)){
+        fs.mkdirSync(fullFolder);
+        }
+      cb(null, fullFolder) 
+    },
+    filename: function (req, file, cb) {
+      
+      // tạo tên file = thời gian hiện tại nối với số ngẫu nhiên => tên file chắc chắn không bị trùng
+      const filename = Date.now() + '-' + Math.round(Math.random() * 1E9) 
+      cb(null, filename + '-' + file.originalname )
+    }
+  }
+);
+//Khởi tạo middleware với cấu hình trên, lưu trên local của server khi dùng multer
+const upload = multer({ storage: storage })
+
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
 router.use(LoginController.checkLogin);
-router.route('/garage').get(garageController.list).post(garageController.create).put(garageController.update);
+
+
+router.route('/garage').get(garageController.list)
+    .post(upload.fields([{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.create)
+    .put(upload.fields([{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.update);
+
 router.route('/garage/getOne').get(garageController.getOne);
 
 //crm
