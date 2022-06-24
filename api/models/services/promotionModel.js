@@ -2,21 +2,20 @@
 
 const mongoose = require("mongoose");
 const serverData = require("../../data/serverData");
-const CustomerInfo = mongoose.Schema(
+const Promotion = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     
-    name: { type: String}, // Tên khách hàng
-    phoneNumber: { type: String}, //SDT
-    email: { type: String}, //email
     hostId : { type: String}, // thuộc global  nào
-    group: { type: Object}, // nhóm KH
-    birthday: { type: Date}, //ngày sinh
-    address: { type: String}, // địa chỉ
-    idNo: { type: String}, // cmnd/cccd
-    idPlace: { type: String}, // nơi cấp cmnd
-    idBank: { type: String}, // STK ngân hàng
-    bankName: { type: String}, // tên ngân hàng
+    name: { type: String}, // Tên chương trình khuyến mãi
+    fromDate: { type: Date}, //Từ ngày
+    toDate: { type: Date}, //Tới ngày
+    isAllGarage: { type: Number}, //1: áp dụng cho tất cả garage
+    garages: { type: Object}, // DS garage áp dụng chương trình khuyến mãi
+    promotionType: { type: Object}, //Loại khuyến mãi
+    target: { type: Number}, //định mức khuyến mãi
+    value: { type: Number}, //giá trị khuyến mãi
+    products: { type: Object}, // Ds sp khuyến mãi - sp combo
     note: { type: String}, 
     createdBy: { type: mongoose.Types.ObjectId, ref: 'g_User',immutable: true, select: false}, // liên kêt với profile
     
@@ -25,10 +24,10 @@ const CustomerInfo = mongoose.Schema(
   { versionKey: false, timestamps: true }
 );
 /** @memberOf account */
-CustomerInfo.statics.ObjectId = function (id) {
+Promotion.statics.ObjectId = function (id) {
   return mongoose.Types.ObjectId(id);
 };
-const _customerInfo = mongoose.model("g_CustomerInfo", CustomerInfo);
+const _promotion = mongoose.model("g_Promotion", Promotion);
 module.exports = {
-  CustomerInfo: _customerInfo,
+  Promotion: _promotion,
 };

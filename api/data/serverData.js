@@ -15,5 +15,10 @@ module.exports = {
         {code:"host",name:"Chủ garage"},
     ],
     recordStatus:[0,1],
-    pathExceltmp: "excel/tmp"
+    pathExceltmp: "excel/tmp",
+    promotionType:[
+        {code:"customer",name:"Khách hàng"},
+        {code:"employee",name:"Nhân viên"},
+        {code:"host",name:"Chủ garage"},
+    ],
 };

@@ -6,7 +6,7 @@ const GroupCustomer = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa 
     name: { type: String},
-    global: { type: Object},
+    hostId : { type: String},
     target: { type: Number, default: 0}, //chỉ tiêu điểm
     discount: { type: Number, default: 0}, // chiết khấu
     note: { type: String}, 

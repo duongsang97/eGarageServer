@@ -16,12 +16,14 @@ function GroupCustomerController() {
         list: (req, res) => {
             try {
                 if (req.user) {
+                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
                     if (perPage === 0 || page === 0) {
                         GroupCustomer.find({
                             $and: [
                                 { "recordStatus": 1 },
+                                { "hostId": hostId },
                             ]
                         }).exec((err, items) => {
                             GroupCustomer.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
@@ -36,6 +38,7 @@ function GroupCustomerController() {
                         GroupCustomer.find({
                             $and: [
                                 { "recordStatus": 1 },
+                                { "hostId": hostId },
                             ]
                         }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
                             GroupCustomer.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
@@ -59,8 +62,10 @@ function GroupCustomerController() {
         create: (req, res) => {
             try {
                 if (req.user && req.body) {
+                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
                     req.body.createdBy = GroupCustomer.ObjectId(req.user._id);
                     req.body.createdDate = Date.now();
+                    req.body.hostId = hostId;
                     GroupCustomer.create(req.body, function (err, small) {
                         if (err) {
                             return res.json({ s: 1, msg: err, data: null });
@@ -135,9 +140,11 @@ function GroupCustomerController() {
         exportExcel: (req, res) => {
             try {
                 if (req.user) {
+                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
                     GroupCustomer.find({
                         $and: [
                             { "recordStatus": 1 },
+                            { "hostId": hostId },
                         ]
                     }).exec((err, items) => {
                         GroupCustomer.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
@@ -157,10 +164,6 @@ function GroupCustomerController() {
                                 worksheet.getCell(rowtitle, col++).value = "STT";
                                 listcol.push({ code: col - 1, value: 10 });
                                 worksheet.getCell(rowtitle, col++).value = "Yêu cầu \n(0: Thêm; 1: Sửa; -1: Xóa)";
-                                listcol.push({ code: col - 1, value: 15 });
-                                worksheet.getCell(rowtitle, col++).value = "Mã chủ sở hữu";
-                                listcol.push({ code: col - 1, value: 15 });
-                                worksheet.getCell(rowtitle, col++).value = "Tên chủ sở hữu";
                                 listcol.push({ code: col - 1, value: 30 });
                                 worksheet.getCell(rowtitle, col++).value = "Mã hệ thống";
                                 listcol.push({ code: col - 1, value: 15 });
@@ -178,8 +181,6 @@ function GroupCustomerController() {
                                     col = 1;
                                     worksheet.getCell(rowindex, col++).value = index + 1;
                                     worksheet.getCell(rowindex, col++).value = "";
-                                    worksheet.getCell(rowindex, col++).value = (el.global || {}).code || '';
-                                    worksheet.getCell(rowindex, col++).value = (el.global || {}).name || '';
                                     worksheet.getCell(rowindex, col++).value = GroupCustomer.ObjectId(el._id);
                                     worksheet.getCell(rowindex, col++).value = el.name;
                                     worksheet.getCell(rowindex, col++).value = el.target;
@@ -243,10 +244,6 @@ function GroupCustomerController() {
                     worksheet.getCell(rowtitle, col++).value = "STT";
                     listcol.push({ code: col - 1, value: 10 });
                     worksheet.getCell(rowtitle, col++).value = "Yêu cầu \n(0: Thêm; 1: Sửa; -1: Xóa)";
-                    listcol.push({ code: col - 1, value: 15 });
-                    worksheet.getCell(rowtitle, col++).value = "Mã chủ sở hữu";
-                    listcol.push({ code: col - 1, value: 15 });
-                    worksheet.getCell(rowtitle, col++).value = "Tên chủ sở hữu";
                     listcol.push({ code: col - 1, value: 30 });
                     worksheet.getCell(rowtitle, col++).value = "Mã hệ thống";
                     listcol.push({ code: col - 1, value: 15 });
@@ -263,8 +260,6 @@ function GroupCustomerController() {
                     for (var i = rowindex; i < 11 + rowtitle; i++) {
                         col = 1;
                         worksheet.getCell(i, col++).value = rowindex - rowtitle;
-                        worksheet.getCell(i, col++).value = "";
-                        worksheet.getCell(i, col++).value = "";
                         worksheet.getCell(i, col++).value = "";
                         worksheet.getCell(i, col++).value = "";
                         worksheet.getCell(i, col++).value = "";
