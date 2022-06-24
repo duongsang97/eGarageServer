@@ -17,8 +17,10 @@ module.exports = {
     recordStatus:[0,1],
     pathExceltmp: "excel/tmp",
     promotionType:[
-        {code:"customer",name:"Khách hàng"},
-        {code:"employee",name:"Nhân viên"},
-        {code:"host",name:"Chủ garage"},
+        {code:"01",name:"Giảm giá sản phẩm/dịch vụ"},
+        {code:"02",name:"Giảm giá hóa đơn khi tiêu phí vực mức"},
+        {code:"03",name:"Khuyến mãi theo combo"},
+        {code:"04",name:"Tích điểm đổi quà"},
+        {code:"05",name:"Mua 1 tặng 1"}
     ],
 };
