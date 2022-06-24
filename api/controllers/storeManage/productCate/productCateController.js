@@ -1,9 +1,9 @@
 "use strict";
-const ServiceCate = require("../../models/services/serviceCategory").ServiceCate;
+const ProductCate = require("../../../models/storeManage/productCate/productCateModel").ProductCate;
 const ObjectId = require('mongoose').Types.ObjectId;
-function ServiceCateController() {
+function  ProductCateController() {
   return {
-    /** @memberOf ServiceManagerController
+    /** @memberOf ProductCateManagerController
      * @description List all building
      * @param req
      * @param res
@@ -17,7 +17,7 @@ function ServiceCateController() {
                 let hostId= req.user.hostId||req.user._id;
                 let garageSelected =req.query.garageSelected||"";
                 let keyword =req.query.keyword||"";
-                ServiceCate.find({
+                ProductCate.find({
                     $and: [
                         {
                             $or: [{"ofGarage":{}},{"ofGarage":null},{"ofGarage.code":garageSelected}],
@@ -28,11 +28,11 @@ function ServiceCateController() {
                         {"recordStatus":1, "hostId":hostId}
                     ]
                 }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
-                    ServiceCate.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                    ProductCate.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                       }
-                        return res.json({ s: 0, msg: "Thành công",data:items||[], listCount: (items||[]).length});
+                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
                     });
                   });
             }
@@ -41,6 +41,7 @@ function ServiceCateController() {
             }
         }
         catch(ex){
+            console.log(ex);
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
@@ -49,12 +50,12 @@ function ServiceCateController() {
             if(req.user){
                 let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
                 let page = req.query.page || 1; // trang
-                let hostId = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                let hostId = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let keyword = req.query.keyword||"";
-                ServiceCate.findOne({
+                ProductCate.findOne({
                     $and: [
                         {
-                            $or:[{ "_id" : ObjectId.isValid(keyword)?ServiceCate.ObjectId(keyword):null},{ "code" : keyword}]
+                            $or:[{ "_id" : ObjectId.isValid(keyword)?ProductCate.ObjectId(keyword):null},{ "code" : keyword}]
                         },
                         {"recordStatus":1, "hostId":hostId}
                     ]
@@ -72,14 +73,14 @@ function ServiceCateController() {
     },
     create: async (req, res) => {
         try{
-            if(req.user){
-                req.body.createdBy = ServiceCate.ObjectId(req.user._id);
-                req.body.updatedBy = ServiceCate.ObjectId(req.user._id);
-                req.body.hostId = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+            if(req.user && (req.body)){
+                req.body.createdBy = ProductCate.ObjectId(req.user._id);
+                req.body.updatedBy = ProductCate.ObjectId(req.user._id);
+                req.body.hostId = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 if(!req.body.code){
-                    req.body.code = await ServiceCate.GenerateKeyCode();
+                    req.body.code = await ProductCate.GenerateKeyCode();
                 }
-                ServiceCate.create(req.body, function (err, small) {
+                ProductCate.create(req.body, function (err, small) {
                     if (err){
                         let errMsg ="";
                         if(err.code === 11000){
@@ -105,18 +106,18 @@ function ServiceCateController() {
     },
     update: (req, res) => {
         try{
-            if(req.user && (req.body)){
-                req.body.updatedBy = ServiceCate.ObjectId(req.user._id);
-                req.body.ofHost = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+            if(req.user && (req.body && req.body.hasOwnProperty("code"))){
+                req.body.updatedBy = ProductCate.ObjectId(req.user._id);
+                req.body.ofHost = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
-                return ServiceCate.findById(req.body._id).exec().then((result)=>{
+                return ProductCate.findById(req.body._id).exec().then((result)=>{
                     if(result){
-                        // xác định có phải service cate global hay ko?
-                        if((Object.entries(result.ofGarage).length ==0|| !result.ofGarage) && result.hostId != req.user._id){
+                        // xác định có phải ProductCate cate global hay ko?
+                        if((!result.ofGarage || Object.entries(result.ofGarage).length ==0) && result.hostId != req.user._id){
                             return res.json({ s: 1, msg: "Không có quyền",data:null});
                         }
                         else{
-                            ServiceCate.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
+                            ProductCate.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
                                 if (err){
                                     let errMsg =err;
                                     return res.json({ s: 1, msg: errMsg,data:null });
@@ -146,4 +147,4 @@ function ServiceCateController() {
   };
 }
 
-module.exports = new ServiceCateController();
+module.exports = new ProductCateController();

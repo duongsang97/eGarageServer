@@ -30,6 +30,7 @@ console.log("Server Boarding House Running On: " + usePort);
 //
 
 app.use("/api/v1/", router);
+app.use('/publics', express.static('publics'))
 app.use("/", (req, res) => {
   return res.send("The server is temporarily unavailable!");
 });

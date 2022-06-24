@@ -1,6 +1,7 @@
 "use strict";
 const mongoose = require("mongoose");
 const serverData = require("../../data/serverData");
+const randomstring = require("randomstring");
 const ServiceCate = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
@@ -17,6 +18,22 @@ const ServiceCate = mongoose.Schema(
 /** @memberOf account */
 ServiceCate.statics.ObjectId = function (id) {
   return mongoose.Types.ObjectId(id);
+};
+ServiceCate.statics.GenerateKeyCode = async function (){
+  let countLoop =0;
+  let lengthKey =5;
+  let tempKey = "serviceCate_"+randomstring.generate(lengthKey);
+  let tempItem = await _serviceCate.findOne({"code":tempKey});
+  while(tempItem){
+    if(countLoop > 10){
+      lengthKey++;
+      countLoop=0;
+    }
+    tempKey = "serviceCate_"+randomstring.generate(lengthKey);
+    tempItem = await _serviceCate.findOne({"code":tempKey});
+    countLoop++;
+  }
+  return tempKey;
 };
 const _serviceCate = mongoose.model("g_ServiceCate", ServiceCate);
 module.exports = {

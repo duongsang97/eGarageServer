@@ -1,5 +1,6 @@
 "use strict";
 const Service = require("../../models/services/serviceModel").Service;
+const ObjectId = require('mongoose').Types.ObjectId;
 function ServiceController() {
   return {
     /** @memberOf ServiceManagerController
@@ -31,9 +32,36 @@ function ServiceController() {
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                       }
-                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount:count});
+                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
                     });
                   });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
+        }
+        catch(ex){
+            console.log(ex);
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
+        }
+    },
+    getOne: (req, res) => {
+        try{
+            if(req.user){
+                let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
+                let page = req.query.page || 1; // trang
+                let hostId = Service.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                let keyword = req.query.keyword||"";
+                Service.findOne({
+                    $and: [
+                        {
+                            $or:[{ "_id" : ObjectId.isValid(keyword)?Service.ObjectId(keyword):null},{ "code" : keyword}]
+                        },
+                        {"recordStatus":1, "hostId":hostId}
+                    ]
+                }).then(result=>{
+                    return res.json({ s: 0, msg: "Thành công",data:result||{},listCount:(result||{}).length});
+                });
             }
             else{
                 res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
@@ -43,12 +71,15 @@ function ServiceController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
-    create:(req, res) => {
+    create: async (req, res) => {
         try{
-            if(req.user && (req.body && req.body.hasOwnProperty("code"))){
+            if(req.user && (req.body)){
                 req.body.createdBy = Service.ObjectId(req.user._id);
                 req.body.updatedBy = Service.ObjectId(req.user._id);
                 req.body.hostId = Service.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                if(!req.body.code){
+                    req.body.code = await Service.GenerateKeyCode();
+                }
                 Service.create(req.body, function (err, small) {
                     if (err){
                         let errMsg ="";

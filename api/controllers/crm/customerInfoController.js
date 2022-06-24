@@ -4,12 +4,11 @@ var Excel = require('exceljs');
 const serverData = require("../../data/serverData");
 const { GroupCustomer } = require("../../models/crm/groupCustomerModel");
 const ObjectId = require('mongoose').Types.ObjectId;
-
 function CustomerInfoController() {
     return {
         /** @memberOf ServiceManagerController
          * @description List all building
-         * @param req
+         * @param reqs
          * @param res
          * @returns {Promise<any>}
          */
@@ -191,7 +190,7 @@ function CustomerInfoController() {
                                 return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
                             }
                             if (count > 0) {
-                                var filename = serverData.pathExceltmp + '/customerinfo/CustomerInfoList_' + new Date().getTime() + '.xlsx';
+                                var filename = serverData.pathFolderExport + '/customerinfo/CustomerInfoList_' + new Date().getTime() + '.xlsx';
                                 var workbook = new Excel.Workbook();
                                 var worksheet = workbook.addWorksheet('Danh sách  khách hàng', { properties: { tabColor: { argb: 'FFC0000' } } });
                                 worksheet.getCell(2, 2).value = "DANG SÁCH KHÁCH HÀNG";
@@ -289,7 +288,7 @@ function CustomerInfoController() {
         exportTemplateExcel: (req, res) => {
             try {
                 if (req.user) {
-                    var filename = serverData.pathExceltmp + '/customerinfo/CustomerInfoList_Temp_' + new Date().getTime() + '.xlsx';
+                    var filename = serverData.pathFolderExport + '/customerinfo/CustomerInfoList_Temp_' + new Date().getTime() + '.xlsx';
                     var workbook = new Excel.Workbook();
                     var worksheet = workbook.addWorksheet('Danh sách  khách hàng', { properties: { tabColor: { argb: 'FFC0000' } } });
                     worksheet.getCell(2, 2).value = "DANG SÁCH KHÁCH HÀNG";
