@@ -23,4 +23,8 @@ module.exports = {
         {code:"04",name:"Tích điểm đổi quà"},
         {code:"05",name:"Mua 1 tặng 1"}
     ],
+    promotionValueType:[
+        {code:"01",name:"Theo %"},
+        {code:"02",name:"Theo tiền"}
+    ],
 };

@@ -2,6 +2,8 @@
 const CustomerInfo = require("../../models/crm/customerInfoModel").CustomerInfo;
 var Excel = require('exceljs');
 const serverData = require("../../data/serverData");
+const { GroupCustomer } = require("../../models/crm/groupCustomerModel");
+const ObjectId = require('mongoose').Types.ObjectId;
 
 function CustomerInfoController() {
     return {
@@ -16,10 +18,14 @@ function CustomerInfoController() {
                 if (req.user) {
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
-                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
+                    let hostId = req.user.hostId || req.user._id;
+                    let keyword = req.query.keyword || "";
                     if (perPage === 0 || page === 0) {
                         CustomerInfo.find({
                             $and: [
+                                {
+                                    $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                                },
                                 { "recordStatus": 1 },
                                 { "hostId": hostId },
                             ]
@@ -57,16 +63,50 @@ function CustomerInfoController() {
                 res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
             }
         },
-        create: (req, res) => {
+        getOne: (req, res) => {
+            try {
+                if (req.user) {
+                    let hostId = CustomerInfo.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
+                    let keyword = req.body.keyword || "";
+                    CustomerInfo.findOne({
+                        $and: [
+                            {
+                                $or: [{ "_id": ObjectId.isValid(keyword) ? CustomerInfo.ObjectId(keyword) : null }, { "code": keyword }]
+                            },
+                            { "recordStatus": 1, "hostId": hostId }
+                        ]
+                    }).then(result => {
+                        return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
+                    });
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
+        create: async (req, res) => {
             try {
                 if (req.user && req.body) {
-                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
+                    let hostId = req.user.hostId || req.user._id;
                     req.body.createdBy = CustomerInfo.ObjectId(req.user._id);
                     req.body.createdDate = Date.now();
-                    req.body.hostId = hostId;
+                    req.body.hostId = CustomerInfo.ObjectId(hostId);
+                    if (!req.body.code) {
+                        req.body.code = await CustomerInfo.GenerateKeyCode();
+                    }
                     CustomerInfo.create(req.body, function (err, small) {
                         if (err) {
-                            return res.json({ s: 1, msg: err, data: null });
+                            let errMsg = "";
+                            if (err.code === 11000) {
+                                errMsg = "Trùng mã";
+                            }
+                            else {
+                                errMsg = err;
+                            }
+                            return res.json({ s: 1, msg: errMsg, data: null });
                         }
                         else {
                             return res.json({ s: 0, msg: "Thành công", data: small });
@@ -84,6 +124,7 @@ function CustomerInfoController() {
         update: (req, res) => {
             try {
                 if (req.user && req.body) {
+                    let hostId = req.user.hostId || req.user._id;
                     req.body.updatedBy = CustomerInfo.ObjectId(req.user._id);
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
                     CustomerInfo.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
@@ -106,7 +147,7 @@ function CustomerInfoController() {
         delete: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    req.body.updatedBy = CustomerInfo.ObjectId(req.user._id);
+                    let hostId = req.user.hostId || req.user._id;
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
                     CustomerInfo.findById(req.body._id, function (err, doc) {
                         if (err) {
@@ -138,7 +179,7 @@ function CustomerInfoController() {
         exportExcel: (req, res) => {
             try {
                 if (req.user) {
-                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
+                    let hostId = req.user.hostId || req.user._id;
                     CustomerInfo.find({
                         $and: [
                             { "recordStatus": 1 },
@@ -191,7 +232,7 @@ function CustomerInfoController() {
                                     col = 1;
                                     worksheet.getCell(rowindex, col++).value = index + 1;
                                     worksheet.getCell(rowindex, col++).value = "";
-                                    worksheet.getCell(rowindex, col++).value = el._id;
+                                    worksheet.getCell(rowindex, col++).value = el.code;
                                     worksheet.getCell(rowindex, col++).value = el.name;
                                     worksheet.getCell(rowindex, col++).value = el.phoneNumber;
                                     worksheet.getCell(rowindex, col++).value = el.email;

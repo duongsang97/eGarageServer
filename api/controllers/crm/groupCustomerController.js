@@ -4,6 +4,7 @@ var Excel = require('exceljs');
 var formidable = require('formidable');
 const serverData = require("../../data/serverData");
 const fs = require('fs');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 function GroupCustomerController() {
     return {
@@ -16,12 +17,16 @@ function GroupCustomerController() {
         list: (req, res) => {
             try {
                 if (req.user) {
-                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
+                    let hostId = req.user.hostId || req.user._id;
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
+                    let keyword = req.query.keyword || "";
                     if (perPage === 0 || page === 0) {
                         GroupCustomer.find({
                             $and: [
+                                {
+                                    $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                                },
                                 { "recordStatus": 1 },
                                 { "hostId": hostId },
                             ]
@@ -59,16 +64,50 @@ function GroupCustomerController() {
                 res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
             }
         },
-        create: (req, res) => {
+        getOne: (req, res) => {
+            try {
+                if (req.user) {
+                    let hostId = GroupCustomer.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
+                    let keyword = req.body.keyword || "";
+                    GroupCustomer.findOne({
+                        $and: [
+                            {
+                                $or: [{ "_id": ObjectId.isValid(keyword) ? GroupCustomer.ObjectId(keyword) : null }, { "code": keyword }]
+                            },
+                            { "recordStatus": 1, "hostId": hostId }
+                        ]
+                    }).then(result => {
+                        return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
+                    });
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
+        create: async (req, res) => {
             try {
                 if (req.user && req.body) {
-                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
+                    let hostId = req.user.hostId || req.user._id;
                     req.body.createdBy = GroupCustomer.ObjectId(req.user._id);
                     req.body.createdDate = Date.now();
-                    req.body.hostId = hostId;
+                    req.body.hostId = GroupCustomer.ObjectId(hostId);
+                    if (!req.body.code) {
+                        req.body.code = await GroupCustomer.GenerateKeyCode();
+                    }
                     GroupCustomer.create(req.body, function (err, small) {
                         if (err) {
-                            return res.json({ s: 1, msg: err, data: null });
+                            let errMsg = "";
+                            if (err.code === 11000) {
+                                errMsg = "Trùng mã";
+                            }
+                            else {
+                                errMsg = err;
+                            }
+                            return res.json({ s: 1, msg: errMsg, data: null });
                         }
                         else {
                             return res.json({ s: 0, msg: "Thành công", data: small });
@@ -86,6 +125,7 @@ function GroupCustomerController() {
         update: (req, res) => {
             try {
                 if (req.user && req.body) {
+                    let hostId = req.user.hostId || req.user._id;
                     req.body.updatedBy = GroupCustomer.ObjectId(req.user._id);
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
                     GroupCustomer.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
@@ -108,6 +148,7 @@ function GroupCustomerController() {
         delete: (req, res) => {
             try {
                 if (req.user && req.body) {
+                    let hostId = req.user.hostId || req.user._id;
                     req.body.updatedBy = GroupCustomer.ObjectId(req.user._id);
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
                     GroupCustomer.findById(req.body._id, function (err, doc) {
@@ -140,9 +181,13 @@ function GroupCustomerController() {
         exportExcel: (req, res) => {
             try {
                 if (req.user) {
-                    let hostId = req.user.hostId !== '' ? req.user.hostId : req.user._id.toString();
+                    let hostId = req.user.hostId || req.user._id;
+                    let keyword = req.query.keyword || "";
                     GroupCustomer.find({
                         $and: [
+                            {
+                                $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                            },
                             { "recordStatus": 1 },
                             { "hostId": hostId },
                         ]
@@ -181,7 +226,7 @@ function GroupCustomerController() {
                                     col = 1;
                                     worksheet.getCell(rowindex, col++).value = index + 1;
                                     worksheet.getCell(rowindex, col++).value = "";
-                                    worksheet.getCell(rowindex, col++).value = GroupCustomer.ObjectId(el._id);
+                                    worksheet.getCell(rowindex, col++).value = el.code;
                                     worksheet.getCell(rowindex, col++).value = el.name;
                                     worksheet.getCell(rowindex, col++).value = el.target;
                                     worksheet.getCell(rowindex, col++).value = el.code;
@@ -311,12 +356,12 @@ function GroupCustomerController() {
                     form.parse(req, function (err, fields, files) {
                         console.log(files)
                         var oldpath = files.file.filepath;
-                        var newpath = serverData.pathExceltmp + '/upload/' + new Date().getTime() + '_'+ files.file.originalFilename;
+                        var newpath = serverData.pathExceltmp + '/upload/' + new Date().getTime() + '_' + files.file.originalFilename;
                         fs.copyFile(oldpath, newpath, function (err) {
                             if (err) {
-                                res.json({ s: 1, msg:err, data: null });
+                                res.json({ s: 1, msg: err, data: null });
                             }
-                            else{
+                            else {
                                 res.json({ s: 0, msg: "Thành công!", data: null });
                             }
                         });
