@@ -15,6 +15,19 @@ module.exports = {
         {code:"host",name:"Chủ garage"},
     ],
     recordStatus:[0,1],
+    pathExceltmp: "excel/tmp",
+    promotionType:[
+        {code:"01",name:"Giảm giá sản phẩm/dịch vụ"},
+        {code:"02",name:"Giảm giá hóa đơn khi tiêu phí vực mức"},
+        {code:"03",name:"Khuyến mãi theo combo"},
+        {code:"04",name:"Tích điểm đổi quà"},
+        {code:"05",name:"Mua 1 tặng 1"}
+    ],
+    promotionValueType:[
+        {code:"01",name:"Theo %"},
+        {code:"02",name:"Theo tiền"}
+    ],
+    pathFolderExport: "publics/templates",
     pathFolderExport: "publics/exports",
     pathFolderUpload: "publics/uploads",
     typeTimeDatas:[{"code":"typeMinute","name":"Phút"},{"code":"typeHour","name":"Giờ"},{"code":"typeDay","name":"Ngày"},{"code":"typeMonth","name":"Tháng"},{"code":"typeYear","name":"Năm"}],

@@ -2,3 +2,4 @@
 node_modules/
 publics/exports
 publics/uploads
+package-lock.json
