@@ -111,10 +111,32 @@ function ProfileController() {
     },
     update: (req, res) => {
         try{
-            if(req.user && req.body){
-                req.body.updatedBy = Garage.ObjectId(req.user._id);
+            let data = JSON.parse((req.body.data)||"");
+            let files = (req.files &&  req.files.files)?req.files.files:[];
+            let logos = (req.files &&  req.files.logo)?req.files.logo:[];
+            if(req.user && data){
+                data.updatedBy = Garage.ObjectId(req.user._id);
+                 // xử lý hình ảnh tải lên
+                 try{
+                    // xử lý hình ảnh garage
+                    if(files){
+                        if(!data.images){
+                            data.images =[];
+                        }
+                        files.forEach(element => {
+                            data.images.push(element.path);
+                        });
+                    }
+                    // xử lý logo
+                    if(logos){
+                        data.logo = logos[0].path;
+                    }
+                }
+                catch(ex){
+                    console.log(ex);
+                }
                 //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                Garage.findByIdAndUpdate(req.body._id, req.body, function (err, doc,re) {
+                Garage.findByIdAndUpdate(data._id, data, function (err, doc,re) {
                     if (err){
                         return res.json({ s: 1, msg: "Thất bại",data:err });
                     }
