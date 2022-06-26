@@ -33,7 +33,7 @@ Inventory.statics.GenerateKeyCode = async function (){
   }
   return tempKey;
 };
-const _inventory = mongoose.model("g_ProductCate", Inventory);
+const _inventory = mongoose.model("g_Inventory", Inventory);
 module.exports = {
     Inventory: _inventory,
 };
