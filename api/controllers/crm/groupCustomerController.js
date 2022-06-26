@@ -68,7 +68,7 @@ function GroupCustomerController() {
             try {
                 if (req.user) {
                     let hostId = GroupCustomer.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
-                    let keyword = req.body.keyword || "";
+                    let keyword = req.query.keyword || "";
                     GroupCustomer.findOne({
                         $and: [
                             {

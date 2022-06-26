@@ -1,5 +1,5 @@
 "use strict";
-const Promotion = require("../../models/services/promotionModel").Promotion;
+const Promotion = require("../../models/promotion/promotionModel").Promotion;
 var Excel = require('exceljs');
 var formidable = require('formidable');
 const serverData = require("../../data/serverData");
@@ -68,7 +68,7 @@ function PromotionController() {
             try {
                 if (req.user) {
                     let hostId = Promotion.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
-                    let keyword = req.body.keyword || "";
+                    let keyword = req.query.keyword || "";
                     Promotion.findOne({
                         $and: [
                             {
@@ -91,9 +91,11 @@ function PromotionController() {
         getPromotionType: (req, res) => {
             try {
                 if (req.user) {
-                    return res.json({ s: 0, msg: "Thành công", data: serverData.promotionType, 
-                    listCount: serverData.promotionType.length });
-                    
+                    return res.json({
+                        s: 0, msg: "Thành công", data: serverData.promotionType,
+                        listCount: serverData.promotionType.length
+                    });
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -106,9 +108,11 @@ function PromotionController() {
         getValueType: (req, res) => {
             try {
                 if (req.user) {
-                    return res.json({ s: 0, msg: "Thành công", data: serverData.promotionValueType, 
-                    listCount: serverData.promotionValueType.length });
-                    
+                    return res.json({
+                        s: 0, msg: "Thành công", data: serverData.promotionValueType,
+                        listCount: serverData.promotionValueType.length
+                    });
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
