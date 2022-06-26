@@ -7,6 +7,7 @@ const Product = mongoose.Schema(
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
     name: { type: String}, // tên 
+    productCate: {type: Object, default:null}, // thuộc loại nào
     ofGarage: {type: Object, default:null}, // thuộc garage nào ---> nếu không có là global 
     manufacturer: {type: Object,default:{"code":"none","name":"none"}}, // thuộc nhà sản xuất nào
     model: {type: String}, // model sản phẩm
