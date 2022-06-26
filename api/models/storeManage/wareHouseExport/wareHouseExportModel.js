@@ -6,6 +6,7 @@ const WareHouseExport = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
+    exportStatus:  {type: Number}, // 0 là đang chờ xử lý, -1 là hủy , 1 là chấp nhận
     receivingObject: { type: Object,default:{"name":"note","address":"none"}}, // thông tin đối tương nhận 
     reason:  {type: String}, // lý do xuất kho
     ofGarage: {type: Object, default:null}, // thông tin xuất từ garage nào

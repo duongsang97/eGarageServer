@@ -17,6 +17,10 @@ const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
 const storesController = require("../controllers/storeManage/stores/storesController");
 const ManufacturerController = require("../controllers/storeManage/manufacturers/manufacturerController");
+const WareHouseExportController = require("../controllers/storeManage/wareHouseExport/wareHouseExportController");
+const WareHouseReceiptController = require("../controllers/storeManage/wareHouseReceipt/wareHouseReceiptController");
+const InventoryController = require("../controllers/storeManage/inventory/inventoryController");
+
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -101,7 +105,14 @@ router.route('/stores/getOne').get(storesController.getOne);
 router.route('/manufacturer').get(ManufacturerController.list).post(ManufacturerController.create).put(ManufacturerController.update); // thông tin hãng sản xuất
 router.route('/manufacturer/getOne').get(ManufacturerController.getOne);
 
+router.route('/warehouseexport').get(WareHouseExportController.list).post(WareHouseExportController.create).put(WareHouseExportController.update); // phiếu xuất
+router.route('/warehouseexport/getOne').get(WareHouseExportController.getOne);
 
+router.route('/warehousereceipt').get(WareHouseReceiptController.list).post(WareHouseReceiptController.create).put(WareHouseReceiptController.update); // phiếu nhập
+router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);
+
+router.route('/inventory').get(InventoryController.list).post(InventoryController.create).put(InventoryController.update); // tồn kho
+router.route('/inventory/getOne').get(InventoryController.getOne);
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});
 module.exports = router;
