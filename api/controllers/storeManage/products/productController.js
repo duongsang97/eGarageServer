@@ -73,14 +73,29 @@ function  ProductController() {
     },
     create: async (req, res) => {
         try{
-            if(req.user && (req.body)){
-                req.body.createdBy = Product.ObjectId(req.user._id);
-                req.body.updatedBy = Product.ObjectId(req.user._id);
-                req.body.hostId = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
-                if(!req.body.code){
-                    req.body.code = await Product.GenerateKeyCode();
+            let data = JSON.parse((req.body.data)||"");
+            let files = (req.files &&  req.files.files)?req.files.files:[];
+            if(req.user && (data)){
+                data.createdBy = Product.ObjectId(req.user._id);
+                data.updatedBy = Product.ObjectId(req.user._id);
+                data.hostId = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                if(!data.code){
+                    data.code = await Product.GenerateKeyCode();
                 }
-                Product.create(req.body, function (err, small) {
+                 // xử lý hình ảnh tải lên
+                 try{
+                    // xử lý hình ảnh garage
+                    if(files){
+                        data.images =[];
+                        files.forEach(element => {
+                            data.images.push(element.path);
+                        });
+                    }
+                }
+                catch(ex){
+                    console.log(ex);
+                }
+                Product.create(data, function (err, small) {
                     if (err){
                         let errMsg ="";
                         if(err.code === 11000){
@@ -106,11 +121,30 @@ function  ProductController() {
     },
     update: (req, res) => {
         try{
-            if(req.user && (req.body && req.body.hasOwnProperty("code"))){
-                req.body.updatedBy = Product.ObjectId(req.user._id);
-                req.body.ofHost = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+            let data = JSON.parse((req.body.data)||"");
+            let files = (req.files &&  req.files.files)?req.files.files:[];
+            if(req.user && (data && data.hasOwnProperty("code"))){
+                data.updatedBy = Product.ObjectId(req.user._id);
+                data.ofHost = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+
+                 // xử lý hình ảnh tải lên
+                 try{
+                    // xử lý hình ảnh garage
+                    if(files){
+                        if(!data.images){
+                            data.images =[];
+                        }
+                        files.forEach(element => {
+                            data.images.push(element.path);
+                        });
+                    }
+                }
+                catch(ex){
+                    console.log(ex);
+                }
+
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
-                return Product.findById(req.body._id).exec().then((result)=>{
+                return Product.findById(data._id).exec().then((result)=>{
                     if(result){
                         // xác định có phải Product cate global hay ko?
                         if((!result.ofGarage || Object.entries(result.ofGarage).length ==0) && result.hostId != req.user._id){
