@@ -15,6 +15,7 @@ const supplierController = require("../controllers/storeManage/suppliers/supplie
 const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
 const storesController = require("../controllers/storeManage/stores/storesController");
+const ManufacturerController = require("../controllers/storeManage/manufacturers/manufacturerController");
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -83,6 +84,9 @@ router.route('/units/getOne').get(unitsController.getOne);
 
 router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update); // thông tin kho
 router.route('/stores/getOne').get(storesController.getOne);
+
+router.route('/manufacturer').get(ManufacturerController.list).post(ManufacturerController.create).put(ManufacturerController.update); // thông tin hãng sản xuất
+router.route('/manufacturer/getOne').get(ManufacturerController.getOne);
 
 
 // trả về 404 nếu không có trong router
