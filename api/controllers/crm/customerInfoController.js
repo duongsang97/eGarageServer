@@ -66,7 +66,7 @@ function CustomerInfoController() {
             try {
                 if (req.user) {
                     let hostId = CustomerInfo.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
-                    let keyword = req.body.keyword || "";
+                    let keyword = req.query.keyword||"";
                     CustomerInfo.findOne({
                         $and: [
                             {
