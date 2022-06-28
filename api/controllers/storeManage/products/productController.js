@@ -117,7 +117,6 @@ function  ProductController() {
             }
         }
         catch(ex){
-            console.log(ex);
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
         }
     },
@@ -145,7 +144,6 @@ function  ProductController() {
                 catch(ex){
                     console.log(ex);
                 }
-
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 return Product.findById(data._id).exec().then((result)=>{
                     if(result){
@@ -154,7 +152,7 @@ function  ProductController() {
                             return res.json({ s: 1, msg: "Không có quyền",data:null});
                         }
                         else{
-                            Product.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
+                            Product.findByIdAndUpdate(data._id,data, function (err, small) {
                                 if (err){
                                     let errMsg =err;
                                     return res.json({ s: 1, msg: errMsg,data:null });
