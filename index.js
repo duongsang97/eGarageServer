@@ -20,10 +20,10 @@ var corsOptions = {
 app.use(cors(corsOptions));
 //This overrides the default error handler, and must be called _last_ on the app
 app.disable("x-powered-by");
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: true,limit:bytes(50000)}));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({extended: true,limit:bytes(50000)}));
 let usePort = process.env.PORT||config.appConfig.port;
 app.listen(usePort);
 console.log("Server Boarding House Running On: " + usePort);

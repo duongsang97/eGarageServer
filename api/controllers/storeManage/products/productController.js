@@ -73,7 +73,7 @@ function  ProductController() {
     },
     create: async (req, res) => {
         try{
-            let data = JSON.parse((req.body.data)||"");
+            let data = JSON.parse(JSON.parse((req.body.data)||{}));
             let files = (req.files &&  req.files.files)?req.files.files:[];
             if(req.user && (data)){
                 data.createdBy = Product.ObjectId(req.user._id);
@@ -116,12 +116,14 @@ function  ProductController() {
             }
         }
         catch(ex){
+            console.log(ex);
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
         }
     },
     update: (req, res) => {
         try{
-            let data = JSON.parse((req.body.data)||"");
+           
+            let data = JSON.parse(JSON.parse((req.body.data)||{}));
             let files = (req.files &&  req.files.files)?req.files.files:[];
             if(req.user && (data && data.hasOwnProperty("code"))){
                 data.updatedBy = Product.ObjectId(req.user._id);

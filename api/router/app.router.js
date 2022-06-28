@@ -47,8 +47,8 @@ router.use(LoginController.checkLogin);
 
 
 router.route('/garage').get(garageController.list)
-    .post(upload.fields([{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.create)
-    .put(upload.fields([{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.update);
+    .post(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.create)
+    .put(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.update);
 
 router.route('/garage/getOne').get(garageController.getOne);
 
@@ -73,7 +73,7 @@ router.route('/service/getOne').get(serviceController.getOne);
 router.route('/productcate').get(productCateController.list).post(productCateController.create).put(productCateController.update);
 router.route('/productcate/getOne').get(productCateController.getOne);
 
-router.route('/product').get(productController.list).post(productController.create).put(productController.update);
+router.route('/product').get(productController.list).post(upload.fields([{name: 'data'},{name: 'files', maxCount: 10}]),productController.create).put(upload.fields([{name: 'data'},{name: 'files', maxCount: 10}]),productController.update);
 router.route('/product/getOne').get(productController.getOne);
 
 router.route('/suppliers').get(supplierController.list).post(supplierController.create).put(supplierController.update);

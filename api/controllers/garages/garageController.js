@@ -65,7 +65,7 @@ function ProfileController() {
     },
     create: async (req, res) => {
         try{
-            let data = JSON.parse((req.body.data)||"");
+            let data = JSON.parse(JSON.parse((req.body.data)||{}));
             let files = (req.files &&  req.files.files)?req.files.files:[];
             let logos = (req.files &&  req.files.logo)?req.files.logo:[];
             if(req.user && data){
@@ -111,7 +111,7 @@ function ProfileController() {
     },
     update: (req, res) => {
         try{
-            let data = JSON.parse((req.body.data)||"");
+            let data = JSON.parse(JSON.parse((req.body.data)||{}));
             let files = (req.files &&  req.files.files)?req.files.files:[];
             let logos = (req.files &&  req.files.logo)?req.files.logo:[];
             if(req.user && data){
