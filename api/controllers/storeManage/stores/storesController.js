@@ -45,6 +45,37 @@ function  StoresController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
+    listAll:(req, res)=>{
+       try{
+            let hostId= req.user.hostId||req.user._id;
+            let keyword =req.query.keyword||"";
+            Stores.find({
+                $and: [
+                    {
+                        $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
+                    },
+                    {"recordStatus":1, "hostId":hostId}
+                ]
+            }).exec((err, items) => {
+                let result =[];
+                if(items){
+                    items.forEach(e=>{
+                        let _temp = {
+                            "code": e.code,
+                            "name": e.name,
+                            "address": e.address||"",
+                            "ofGarage" : e.ofGarage||null
+                        };
+                        result.push(_temp);
+                    });
+                }
+                return res.json({ s: 0, msg: "Thành công",data:result||[] ,listCount: (result||[]).length});
+            });
+       }
+       catch(ex){
+        
+       }
+    },
     getOne: (req, res) => {
         try{
             if(req.user){

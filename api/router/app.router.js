@@ -101,7 +101,7 @@ router.route('/units/getOne').get(unitsController.getOne);
 
 router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update); // thông tin kho
 router.route('/stores/getOne').get(storesController.getOne);
-
+router.route('/stores/listall').get(storesController.listAll);
 router.route('/manufacturer').get(ManufacturerController.list).post(ManufacturerController.create).put(ManufacturerController.update); // thông tin hãng sản xuất
 router.route('/manufacturer/getOne').get(ManufacturerController.getOne);
 
