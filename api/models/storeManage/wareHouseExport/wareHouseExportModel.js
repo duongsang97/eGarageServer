@@ -9,7 +9,7 @@ const WareHouseExport = mongoose.Schema(
     exportStatus:  {type: Number}, // 0 là đang chờ xử lý, -1 là hủy , 1 là chấp nhận
     receivingObject: { type: Object,default:{"name":"note","address":"none"}}, // thông tin đối tương nhận 
     reason:  {type: String}, // lý do xuất kho
-    ofGarage: {type: Object, default:null}, // thông tin xuất từ garage nào
+    exportFrom: {type: Object, default:null}, // thông tin xuất từ kho nào
     exportTo:  {type: Object, default:null}, // xuất tới kho nào --> nếu null xuất kho ra ngoài ngược lại xuất kho nội bộ
     totalMoneyNumber: {type: Number}, // tổng tiền bằng số
     totalMoneyString: {type: String}, // tổng tiền băng chữ

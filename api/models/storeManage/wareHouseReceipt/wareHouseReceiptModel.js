@@ -10,7 +10,7 @@ const WareHouseReceipt = mongoose.Schema(
     receivingObject: { type: Object,default:{"name":"note","address":"none"}}, // thông tin đối tượng giao hàng
     supplierObject: {type: String}, // thông tin đối tượng cung cấp
     info:  {type: String}, // thông tin thêm
-    ofGarage: {type: Object, default:null}, // thông tin xuất từ garage nào
+    receiptTo: {type: Object, default:null}, // thông tin kho nhận
     receiptFrom:  {type: Object, default:null}, // nhập từ kho nào đó , != null nếu nhập nội bộ
     totalMoneyNumber: {type: Number}, // tổng tiền bằng số
     totalMoneyString: {type: String}, // tổng tiền băng chữ
