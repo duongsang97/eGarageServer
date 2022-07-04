@@ -32,4 +32,6 @@ module.exports = {
     pathFolderUpload: "publics/uploads",
     typeTimeDatas:[{"code":"typeMinute","name":"Phút"},{"code":"typeHour","name":"Giờ"},{"code":"typeDay","name":"Ngày"},{"code":"typeMonth","name":"Tháng"},{"code":"typeYear","name":"Năm"}],
     typeLengthDatas:[{"code":"typekm","name":"Km"},{"code":"typeMile","name":"Mile"}],
+    discountType:[{"code":"dis01","name":"Tự động"},{"code":"dis02","name":"Trực tiếp"}],
+    discountUnit:[{"code":"unitDis01","name":"Tiền mặt"},{"code":"unitDis02","name":"Phần trăm (%)"}],
 };

@@ -19,6 +19,11 @@ function AppDataController() {
                 case "typeLength": 
                     data = AppData.typeLengthDatas;
                 break;
+                case "discountType": 
+                    data = AppData.discountType;
+                    break;
+                case "discountUnit": 
+                    data = AppData.discountUnit;
             }
             res.json({ s: 0, msg: "Thành công" ,data:data});
         }
