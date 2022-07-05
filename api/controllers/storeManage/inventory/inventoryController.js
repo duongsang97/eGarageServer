@@ -142,6 +142,47 @@ function  InventoryController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
         }
     },
+    getOverview: (req, res) => {
+        try{
+            if(req.user){
+                let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
+                let page = req.params.page || 1; // trang
+                let hostId= req.user.hostId||req.user._id;
+                let garageSelected =req.query.garageSelected||"";
+                let keyword =req.query.keyword||"";
+                let items = [
+                    {
+                        code:"overview_1",
+                        name:"Sản phẩm sắp hết",
+                        values: 10
+                    },
+                    {
+                        code:"overview_2",
+                        name:"Over 02",
+                        values: 5
+                    },
+                    {
+                        code:"overview_3",
+                        name:"Over 03",
+                        values: 17
+                    },
+                    {
+                        code:"overview_4",
+                        name:"Over 04",
+                        values: 8
+                    }
+                ];
+                return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
+        }
+        catch(ex){
+            console.log(ex);
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
+        }
+    },
   };
 }
 

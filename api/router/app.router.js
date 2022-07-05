@@ -113,6 +113,7 @@ router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);
 
 router.route('/inventory').get(InventoryController.list).post(InventoryController.create).put(InventoryController.update); // tồn kho
 router.route('/inventory/getOne').get(InventoryController.getOne);
+router.route('/inventory/getOverview').get(InventoryController.getOverview);
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});
 module.exports = router;
