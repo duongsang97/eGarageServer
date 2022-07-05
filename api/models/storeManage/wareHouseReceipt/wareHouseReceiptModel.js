@@ -8,7 +8,7 @@ const WareHouseReceipt = mongoose.Schema(
     code: { type: String, index: { unique: true }}, // mã 
     receiptStatus :{type: Number}, // -1 hủy , 0 = đang chờ , 1, chập nhật
     receivingObject: { type: Object,default:{"name":"note","address":"none"}}, // thông tin đối tượng giao hàng
-    supplierObject: {type: String}, // thông tin đối tượng cung cấp
+    supplierObject: {type: Object}, // thông tin đối tượng cung cấp
     info:  {type: String}, // thông tin thêm
     receiptTo: {type: Object, default:null}, // thông tin kho nhận
     receiptFrom:  {type: Object, default:null}, // nhập từ kho nào đó , != null nếu nhập nội bộ
