@@ -1,5 +1,6 @@
 "use strict";
 const Garage = require("../../models/garages/garageModel").Garage;
+const Stores = require("../../models/storeManage/stores/storesModel").Stores;
 const ObjectId = require('mongoose').Types.ObjectId;
 function ProfileController() {
   return {
@@ -97,6 +98,16 @@ function ProfileController() {
                         return res.json({ s: 1, msg: err,data:null });
                     }
                     else{
+                        let _store ={
+                            name: data.name,
+                            address: data.name,
+                            ofGarage:{code:small.code,name:small.name},
+                            hostId:data.hostId,
+                            createdBy:data.createdBy,
+                            updatedBy:data.createdBy,
+                            note:""
+                        };
+                        Stores.create(_store);
                         return res.json({ s: 0, msg: "Thành công",data:small});
                     }
                   });

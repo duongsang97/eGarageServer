@@ -6,7 +6,6 @@ const Vehicle = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
-    name: { type: String}, // tên  xe
     licensePlates: { type: String, index: { unique: true }}, // biển số
     automaker:{type:Object,default:{"code":"none","name":"name"}}, // hãng xe
     carModel:{type:Object,default:{"code":"none","name":"name"}}, // dòng xe , đi theo hãng xe

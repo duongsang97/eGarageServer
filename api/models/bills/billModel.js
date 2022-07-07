@@ -21,6 +21,8 @@ const Bill = mongoose.Schema(
     totalCostString:{type: String}, // tổng số tiền bằng chữ
     commissionCost:{type:Number}, // tiền hoa hồng
     referral: {type:Object}, // thông tin người giới thiệu 
+    paymentHistory:{type: Array}, // lịch sử thanh toán
+    ticketInfo: {type: mongoose.Types.ObjectId, ref: 'g_Ticket'}, // thông tin bill đi kèm
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
@@ -98,5 +100,6 @@ module.exports = {
 //       "name": "Tên màu",
 //       "codeColor": "#FFFFF"
 //     },
-//     "odo":5637
+//     "odo":5637,
+//      "customer":{"code":"mã khách hàng","name":"tên khách hàng"}
 //   }
