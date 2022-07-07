@@ -98,16 +98,20 @@ function ProfileController() {
                         return res.json({ s: 1, msg: err,data:null });
                     }
                     else{
-                        let _store ={
-                            name: data.name,
-                            address: data.name,
-                            ofGarage:{code:small.code,name:small.name},
-                            hostId:data.hostId,
-                            createdBy:data.createdBy,
-                            updatedBy:data.createdBy,
-                            note:""
-                        };
-                        Stores.create(_store);
+                        Stores.GenerateKeyCode().then(result =>{
+                            let _store ={
+                                code: result,
+                                name: data.name,
+                                address: data.name,
+                                ofGarage:{code:small.code,name:small.name},
+                                hostId:data.hostId,
+                                createdBy:data.createdBy,
+                                updatedBy:data.createdBy,
+                                note:""
+                            };
+                            Stores.create(_store);
+                        });
+                        
                         return res.json({ s: 0, msg: "Thành công",data:small});
                     }
                   });
