@@ -16,6 +16,7 @@ module.exports = {
     ],
     recordStatus:[0,1],
     pathExceltmp: "excel/tmp",
+    pathSaveFile: "upload",
     promotionType:[
         {code:"01",name:"Giảm giá sản phẩm/dịch vụ"},
         {code:"02",name:"Giảm giá hóa đơn khi tiêu phí vực mức"},
@@ -32,4 +33,13 @@ module.exports = {
     pathFolderUpload: "publics/uploads",
     typeTimeDatas:[{"code":"typeMinute","name":"Phút"},{"code":"typeHour","name":"Giờ"},{"code":"typeDay","name":"Ngày"},{"code":"typeMonth","name":"Tháng"},{"code":"typeYear","name":"Năm"}],
     typeLengthDatas:[{"code":"typekm","name":"Km"},{"code":"typeMile","name":"Mile"}],
+    
+    workType:[
+        {code:"01",name:"Chính thức"},
+        {code:"02",name:"Thời vụ"}
+    ],
+    workStatus:[
+        {code:"01",name:"Đang hoạt động"},
+        {code:"02",name:"Đã nghỉ việc"}
+    ],
 };

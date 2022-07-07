@@ -16,6 +16,8 @@ const supplierController = require("../controllers/storeManage/suppliers/supplie
 const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
 const storesController = require("../controllers/storeManage/stores/storesController");
+const employeeInfoController = require("../controllers/attendance/employeeInfoController");
+const positionController = require("../controllers/attendance/positionController");
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -96,6 +98,19 @@ router.route('/units/getOne').get(unitsController.getOne);
 
 router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update); // thông tin kho
 router.route('/stores/getOne').get(storesController.getOne);
+
+//chấm công
+router.route('/emp').get(employeeInfoController.list)
+.post(upload.fields([{name: 'avatar', maxCount: 1},{name: 'fileId', maxCount: 10}]),employeeInfoController.create)
+.put(upload.fields([{name: 'avatar', maxCount: 1},{name: 'fileId', maxCount: 10}]),employeeInfoController.update)
+.delete(employeeInfoController.delete);
+router.route('/emp/getone').get(employeeInfoController.getOne);
+router.route('/emp/getworktype').get(employeeInfoController.getWorkType);
+router.route('/emp/getworkstatus').get(employeeInfoController.getWorkStatus);
+
+router.route('/pos').get(positionController.list).post(positionController.create)
+.put(positionController.update).delete(positionController.delete);
+router.route('/pos/getone').get(positionController.getOne);
 
 
 // trả về 404 nếu không có trong router
