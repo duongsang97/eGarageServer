@@ -21,6 +21,8 @@ const WareHouseExportController = require("../controllers/storeManage/wareHouseE
 const WareHouseReceiptController = require("../controllers/storeManage/wareHouseReceipt/wareHouseReceiptController");
 const InventoryController = require("../controllers/storeManage/inventory/inventoryController");
 
+const employeeInfoController = require("../controllers/attendance/employeeInfoController");
+const positionController = require("../controllers/attendance/positionController");
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -107,6 +109,19 @@ router.route('/manufacturer/getOne').get(ManufacturerController.getOne);
 
 router.route('/warehouseexport').get(WareHouseExportController.list).post(WareHouseExportController.create).put(WareHouseExportController.update); // phiếu xuất
 router.route('/warehouseexport/getOne').get(WareHouseExportController.getOne);
+//chấm công
+router.route('/emp').get(employeeInfoController.list)
+.post(upload.fields([{name: 'avatar', maxCount: 1},{name: 'fileId', maxCount: 10}]),employeeInfoController.create)
+.put(upload.fields([{name: 'avatar', maxCount: 1},{name: 'fileId', maxCount: 10}]),employeeInfoController.update)
+.delete(employeeInfoController.delete);
+router.route('/emp/getone').get(employeeInfoController.getOne);
+router.route('/emp/getworktype').get(employeeInfoController.getWorkType);
+router.route('/emp/getworkstatus').get(employeeInfoController.getWorkStatus);
+
+router.route('/pos').get(positionController.list).post(positionController.create)
+.put(positionController.update).delete(positionController.delete);
+router.route('/pos/getone').get(positionController.getOne);
+
 
 router.route('/warehousereceipt').get(WareHouseReceiptController.list).post(WareHouseReceiptController.create).put(WareHouseReceiptController.update); // phiếu nhập
 router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);

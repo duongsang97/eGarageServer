@@ -16,6 +16,7 @@ module.exports = {
     ],
     recordStatus:[0,1],
     pathExceltmp: "excel/tmp",
+    pathSaveFile: "upload",
     promotionType:[
         {code:"01",name:"Giảm giá sản phẩm/dịch vụ"},
         {code:"02",name:"Giảm giá hóa đơn khi tiêu phí vực mức"},
@@ -38,5 +39,13 @@ module.exports = {
         {"code":"step02","name":"Kiểm tra",},{"code":"step03","name":"Báo giá",},{"code":"step04","name":"Thực hiện",},
         {"code":"step05","name":"Nghiệm thu",},{"code":"step06","name":"Thanh toán",},{"code":"step07","name":"Hoàn thành",},
         {"code":"step-1","name":"Hủy bỏ",}
-    ]
+    ],
+    workType:[
+        {code:"01",name:"Chính thức"},
+        {code:"02",name:"Thời vụ"}
+    ],
+    workStatus:[
+        {code:"01",name:"Đang hoạt động"},
+        {code:"02",name:"Đã nghỉ việc"}
+    ],
 };
