@@ -175,6 +175,56 @@ function  StoresController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
         }
     },
+    delete: (req, res) => {
+        try{
+            if(req.user){
+                let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
+                let page = req.query.page || 1; // trang
+                let hostId = Stores.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                let keyword = req.query.keyword||"";
+                // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
+                Stores.findOne({
+                    $and: [
+                        {
+                            $or:[{ "_id" : ObjectId.isValid(keyword)?Stores.ObjectId(keyword):null},{ "code" : keyword}]
+                        },
+                        {"recordStatus":1, "hostId":hostId}
+                    ]
+                }).exec().then((result)=>{
+                    if(result){
+                        // xác định có phải Product cate global hay ko?
+                        if((!result.ofGarage || result.ofGarage == {}) && result.hostId != req.user._id){
+                            return res.json({ s: 1, msg: "Không có quyền",data:null});
+                        }
+                        else{
+                            result.recordStatus = -1;
+                            Stores.findByIdAndUpdate(result._id,result, function (err, small) {
+                                if (err){
+                                    let errMsg =err;
+                                    return res.json({ s: 1, msg: errMsg,data:null });
+                                }
+                                else{
+                                    if(!small){
+                                        return res.json({ s: 1, msg: "Không tìm thấy dữ liệu",data:null});
+                                    }
+                                    return res.json({ s: 0, msg: "Thành công",data:{}});
+                                }
+                              });
+                        }
+                    }
+                    else{
+                        return res.json({ s: 1, msg: "Không tìm thấy dữ liệu",data:null});
+                    }
+                });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
+        }
+        catch(ex){
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
+        }
+    },
   };
 }
 

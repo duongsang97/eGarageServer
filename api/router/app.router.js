@@ -101,7 +101,7 @@ router.route('/suppliers/getOne').get(supplierController.getOne);
 router.route('/units').get(unitsController.list).post(unitsController.create).put(unitsController.update); // đơn vị tính
 router.route('/units/getOne').get(unitsController.getOne);
 
-router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update); // thông tin kho
+router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update).delete(storesController.delete); // thông tin kho
 router.route('/stores/getOne').get(storesController.getOne);
 router.route('/stores/listall').get(storesController.listAll);
 router.route('/manufacturer').get(ManufacturerController.list).post(ManufacturerController.create).put(ManufacturerController.update); // thông tin hãng sản xuất
