@@ -1,5 +1,6 @@
 "use strict";
 const WareHouseReceipt = require("../../../models/storeManage/wareHouseReceipt/wareHouseReceiptModel").WareHouseReceipt;
+const Inventory = require("../../../models/storeManage/inventory/inventoryModel").Inventory;
 const ObjectId = require('mongoose').Types.ObjectId;
 function WareHouseReceiptController() {
   return {
@@ -77,7 +78,7 @@ function WareHouseReceiptController() {
                 if(!req.body.code){
                     req.body.code = await WareHouseReceipt.GenerateKeyCode();
                 }
-                WareHouseReceipt.create(req.body, function (err, small) {
+                WareHouseReceipt.create(req.body,function (err, small)  {
                     if (err){
                         let errMsg ="";
                         if(err.code === 11000){
@@ -89,6 +90,32 @@ function WareHouseReceiptController() {
                         return res.json({ s: 1, msg: errMsg,data:null });
                     }
                     else{
+                        // cập nhật dữ liệu hàng vào tồn kho
+                        if(small.receiptStatus && small.receiptStatus ==1 && small.receiptDetail){
+                            // kiểm tra và xủ lý hàng
+                            //const options = {upsert: true,new: true,setDefaultsOnInsert: true};
+                           small.receiptDetail.forEach( async (element)=> {
+                                let productReceipt ={
+                                    "product":element.product,
+                                    "unit":element.unit,
+                                    "amount":element.actual,
+                                    "hostId":req.body.hostId,
+                                    "store": {"code":small.receiptTo.code,"name":small.receiptTo.name},
+                                    "note":""
+                                };
+                                let query = {"product.code":productReceipt.product.code,"unit.code":productReceipt.unit.code}
+                                var _temp = await Inventory.findOne(query);
+
+                                console.log(query);
+                                if(_temp){
+                                    _temp.amount = Number(_temp.amount)+Number(productReceipt.amount);
+                                    await Inventory.findOneAndUpdate(query,_temp);
+                                }
+                                else{
+                                    await Inventory.create(productReceipt);
+                                }
+                           });
+                        }
                         return res.json({ s: 0, msg: "Thành công",data:small});
                     }
                   });
@@ -122,6 +149,33 @@ function WareHouseReceiptController() {
                                 else{
                                     if(!small){
                                         return res.json({ s: 1, msg: "Không tìm thấy dữ liệu",data:null});
+                                    }
+                                    // cập nhật dữ liệu hàng vào tồn kho
+                                    // cập nhật dữ liệu hàng vào tồn kho
+                                    if(small.receiptStatus && small.receiptStatus ==1 && small.receiptDetail){
+                                        // kiểm tra và xủ lý hàng
+                                        //const options = {upsert: true,new: true,setDefaultsOnInsert: true};
+                                    small.receiptDetail.forEach( async (element)=> {
+                                            let productReceipt ={
+                                                "product":element.product,
+                                                "unit":element.unit,
+                                                "amount":element.actual,
+                                                "hostId":req.body.hostId,
+                                                "store": {"code":small.receiptTo.code,"name":small.receiptTo.name},
+                                                "note":""
+                                            };
+                                            let query = {"product.code":productReceipt.product.code,"unit.code":productReceipt.unit.code}
+                                            var _temp = await Inventory.findOne(query);
+
+                                            console.log(query);
+                                            if(_temp){
+                                                _temp.amount = Number(_temp.amount)+Number(productReceipt.amount);
+                                                await Inventory.findOneAndUpdate(query,_temp);
+                                            }
+                                            else{
+                                                await Inventory.create(productReceipt);
+                                            }
+                                    });
                                     }
                                     return res.json({ s: 0, msg: "Thành công",data:small});
                                 }

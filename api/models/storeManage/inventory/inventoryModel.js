@@ -7,7 +7,8 @@ const Inventory = mongoose.Schema(
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     product: {type: Object, default:{"code":"none","name":"none"}}, // thông tin sản phẩm
     amount: {type: Number, default:0}, // số lượng trong kho
-    ofGarage: {type: Object, default:null}, // thuộc garage nào
+    unit:{type: Object, default:{}}, // đơn vị tính
+    store:{type: Object, default:null},//
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     note:  { type: String}, // ghi chú 
   },

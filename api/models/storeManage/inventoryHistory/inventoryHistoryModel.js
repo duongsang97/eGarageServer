@@ -7,6 +7,8 @@ const InventoryHistory = mongoose.Schema(
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     changeInfo: {type: Array, default:{"code":"none","name":"none","amount":0}}, // thông tin sản phẩm thay đổi
     ofGarage: {type: Object, default:null}, // thuộc garage nào
+    wareHouseReceiptId: {type: mongoose.Types.ObjectId, ref: 'g_wareHouseReceipt'},
+    wareHouseExportId: {type: mongoose.Types.ObjectId, ref: 'g_wareHouseExport'},
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
   },
   { versionKey: false, timestamps: true }
