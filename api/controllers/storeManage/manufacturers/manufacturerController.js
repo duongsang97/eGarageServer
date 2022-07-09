@@ -105,7 +105,7 @@ function  ManufacturerController() {
         try{
             if(req.user && (req.body && req.body.hasOwnProperty("code"))){
                 req.body.updatedBy = Manufacturers.ObjectId(req.user._id);
-                req.body.ofHost = Manufacturers.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = Manufacturers.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 Manufacturers.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
                     if (err){

@@ -108,7 +108,7 @@ function  ProductCateController() {
         try{
             if(req.user && (req.body && req.body.hasOwnProperty("code"))){
                 req.body.updatedBy = ProductCate.ObjectId(req.user._id);
-                req.body.ofHost = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = ProductCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 return ProductCate.findById(req.body._id).exec().then((result)=>{
                     if(result){

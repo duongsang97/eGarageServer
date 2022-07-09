@@ -108,7 +108,7 @@ function ServiceController() {
         try{
             if(req.user && (req.body && req.body.hasOwnProperty("code"))){
                 req.body.updatedBy = Service.ObjectId(req.user._id);
-                req.body.ofHost = Service.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = Service.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 return Service.findById(req.body._id).exec().then((result)=>{
                     if(result){

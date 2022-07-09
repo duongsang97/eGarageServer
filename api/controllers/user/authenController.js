@@ -13,7 +13,6 @@ function AuthenController() {
      */
     doLogin: async (req, res) => {
         let user = req.body||req.query;
-        console.log(user);
         if (!user || !user.userName || !user.password) {
           return res.json({ s: 1, msg: "Please enter email and password" });
         } else {

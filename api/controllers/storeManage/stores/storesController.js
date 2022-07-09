@@ -139,7 +139,7 @@ function  StoresController() {
         try{
             if(req.user && (req.body && req.body.hasOwnProperty("code"))){
                 req.body.updatedBy = Stores.ObjectId(req.user._id);
-                req.body.ofHost = Stores.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = Stores.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 return Stores.findById(req.body._id).exec().then((result)=>{
                     if(result){

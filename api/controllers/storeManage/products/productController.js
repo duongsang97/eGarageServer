@@ -126,7 +126,7 @@ function  ProductController() {
             let files = (req.files &&  req.files.files)?req.files.files:[];
             if(req.user && (data && data.hasOwnProperty("code"))){
                 data.updatedBy = Product.ObjectId(req.user._id);
-                data.ofHost = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                data.hostId = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
 
                  // xử lý hình ảnh tải lên
                  try{
