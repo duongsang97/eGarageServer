@@ -221,7 +221,7 @@ function  ProductController() {
                                     if(!small){
                                         return res.json({ s: 1, msg: "Không tìm thấy dữ liệu",data:null});
                                     }
-                                    return res.json({ s: 0, msg: "Thành công",data:small});
+                                    return res.json({ s: 0, msg: "Thành công",data:{}});
                                 }
                               });
                         }
