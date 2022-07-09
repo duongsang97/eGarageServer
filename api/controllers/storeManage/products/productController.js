@@ -185,19 +185,8 @@ function  ProductController() {
                 let page = req.query.page || 1; // trang
                 let hostId = Product.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let keyword = req.query.keyword||"";
-                Product.findOne({
-                    $and: [
-                        {
-                            $or:[{ "_id" : ObjectId.isValid(keyword)?Product.ObjectId(keyword):null},{ "code" : keyword}]
-                        },
-                        {"recordStatus":1, "hostId":hostId}
-                    ]
-                }).then(result=>{
-                    return res.json({ s: 0, msg: "Thành công",data:result||{},listCount:(result||{}).length});
-                });
-
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
-                return Product.findOne({
+                Product.findOne({
                     $and: [
                         {
                             $or:[{ "_id" : ObjectId.isValid(keyword)?Product.ObjectId(keyword):null},{ "code" : keyword}]
