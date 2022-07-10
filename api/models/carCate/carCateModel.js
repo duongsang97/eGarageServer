@@ -1,6 +1,6 @@
 "use strict";
 const mongoose = require("mongoose");
-const serverData = require("../../../data/serverData");
+const serverData = require("../../data/serverData");
 const randomstring = require("randomstring");
 const CarCate = mongoose.Schema(
   {

@@ -20,6 +20,9 @@ const ManufacturerController = require("../controllers/storeManage/manufacturers
 const WareHouseExportController = require("../controllers/storeManage/wareHouseExport/wareHouseExportController");
 const WareHouseReceiptController = require("../controllers/storeManage/wareHouseReceipt/wareHouseReceiptController");
 const InventoryController = require("../controllers/storeManage/inventory/inventoryController");
+const ColorsController = require("../controllers/colors/colorController");
+const AutoMakerController = require("../controllers/autoMakers/autoMakerController");
+const CarCateController = require("../controllers/carCate/carCateController");
 
 const employeeInfoController = require("../controllers/attendance/employeeInfoController");
 const positionController = require("../controllers/attendance/positionController");
@@ -132,6 +135,22 @@ router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);
 router.route('/inventory').get(InventoryController.list);//.post(InventoryController.create).put(InventoryController.update); // tồn kho
 //router.route('/inventory/getOne').get(InventoryController.getOne);
 router.route('/inventory/getOverview').get(InventoryController.getOverview);
+
+// api quản lý màu sắc ColorsController
+router.route('/colors').get(ColorsController.list).post(ColorsController.create).put(ColorsController.update); // phiếu nhập
+router.route('/colors/getOne').get(ColorsController.getOne);
+
+// api quản lý hãng xe
+router.route('/automaker').get(AutoMakerController.list)
+  .post(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1}]),AutoMakerController.create)
+  .put(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1}]),AutoMakerController.update);
+
+router.route('/automaker/getOne').get(AutoMakerController.getOne);
+
+// api quản lý dòng xe, loại xe
+router.route('/carCate').get(CarCateController.list).post(CarCateController.create).put(CarCateController.update); // phiếu nhập
+router.route('/carcate/getOne').get(CarCateController.getOne);
+
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});
 module.exports = router;
