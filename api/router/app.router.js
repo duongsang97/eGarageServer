@@ -50,6 +50,7 @@ const upload = multer({ storage: storage })
 
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
+router.route('/appdata/getProvince').get(appDataeController.getProvince);
 router.use(LoginController.checkLogin);
 
 
