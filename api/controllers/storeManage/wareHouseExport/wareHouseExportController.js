@@ -40,7 +40,7 @@ function WareHouseExportController() {
                             },
                             {"recordStatus":1, "hostId":hostId}
                         ]
-                    }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                    }).skip((perPage * page) - perPage).limit(perPage).sort({"createdAt":-1}).exec((err, items) => {
                         WareHouseExport.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                         if (err){
                             return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });

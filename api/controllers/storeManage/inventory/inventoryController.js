@@ -24,7 +24,7 @@ function  InventoryController() {
                         },
                         {"recordStatus":1, "hostId":hostId,"ofGarage.code":garageSelected}
                     ]
-                }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                }).skip((perPage * page) - perPage).limit(perPage).sort({"createdAt":-1}).exec((err, items) => {
                     Inventory.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
