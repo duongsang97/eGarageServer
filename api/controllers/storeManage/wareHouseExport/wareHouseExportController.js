@@ -3,9 +3,11 @@
 const e = require("cors");
 
 const WareHouseExport = require("../../../models/storeManage/wareHouseExport/wareHouseExportModel").WareHouseExport;
+const WareHouseReceipt = require("../../../models/storeManage/wareHouseReceipt/wareHouseReceiptModel").WareHouseReceipt;
 const ObjectId = require('mongoose').Types.ObjectId;
 const Inventory = require("../../../models/storeManage/inventory/inventoryModel").Inventory;
 const Stores = require("../../../models/storeManage/stores/storesModel").Stores;
+const dateFormat = require('date-format');
 function WareHouseExportController() {
   return {
     /** @memberOf ServiceManagerController
@@ -27,7 +29,7 @@ function WareHouseExportController() {
                     let keySearch = [];
                     listStore.forEach(element=>{
                         if(element.ofGarage){
-                            keySearch.push({"exportTo.code":element.code})
+                            keySearch.push({"exportFrom.code":element.code})
                         }
                     });
                     WareHouseExport.find({
@@ -75,7 +77,7 @@ function WareHouseExportController() {
                     let keySearch = [];
                     listStore.forEach(element=>{
                         if(element.ofGarage){
-                            keySearch.push({"exportTo.code":element.code})
+                            keySearch.push({"exportFrom.code":element.code})
                         }
                     });
                     WareHouseExport.findOne({
@@ -120,7 +122,7 @@ function WareHouseExportController() {
                         }
                     });
                     if(checked){
-                        WareHouseExport.create(req.body, function (err, small) {
+                        WareHouseExport.create(req.body, async function (err, small) {
                         if (err){
                             let errMsg ="";
                             if(err.code === 11000){
@@ -132,6 +134,7 @@ function WareHouseExportController() {
                             return res.json({ s: 1, msg: errMsg,data:null });
                         }
                         else{
+                            let receiptDetailData = [];
                             // cập nhật dữ liệu hàng vào tồn kho
                             if(small.exportStatus && small.exportStatus ==1 && small.exportDetail){
                                 // kiểm tra và xủ lý hàng
@@ -145,7 +148,17 @@ function WareHouseExportController() {
                                         "store": {"code":small.exportFrom.code,"name":small.exportFrom.name},
                                         "note":""
                                     };
-                                    let query = {"product.code":productExport.product.code,"unit.code":productExport.unit.code}
+                                    let receiptDetailTemp ={
+                                        "product":element.product,
+                                        "unit":element.unit,
+                                        "voucherActual": element.requestActual,
+                                        "actual":element.actual,
+                                        "unitPrice":element.unitPrice,
+                                        "amount": element.amount
+                                    }
+                                    receiptDetailData.push(receiptDetailTemp);
+
+                                    let query = {"product.code":productExport.product.code,"unit.code":productExport.unit.code,"store.code":small.exportFrom.code}
                                     var _temp = await Inventory.findOne(query);
                                     if(_temp){
                                         _temp.amount = Number(_temp.amount)-Number(productExport.amount);
@@ -158,6 +171,27 @@ function WareHouseExportController() {
                                         await Inventory.create(productExport);
                                     }
                                 });
+
+                                // kiểm tra nếu xuất kho nội bộ --> tự động tạo phiếu nhập cho kho đến
+                                if(req.body.exportTo && req.body.exportTo.code){
+                                    var _tempData ={
+                                        code: await WareHouseReceipt.GenerateKeyCode(),
+                                        receiptStatus: 0,
+                                        supplierObject:{"code":"noibo","name":"Nhập|xuất nội bộ"},
+                                        info:"",
+                                        receiptTo: req.body.exportTo,
+                                        receiptFrom: req.body.exportFrom,
+                                        totalMoneyNumber:req.body.totalMoneyNumber,
+                                        totalMoneyString:req.body.totalMoneyString,
+                                        voucherNumber: "NNB_"+dateFormat('yyyyMMddhhmmss', new Date()),
+                                        receiptDetail:receiptDetailData||[],
+                                        hostId:req.body.hostId,
+                                        createdBy:req.body.createdBy,
+                                        updatedBy:req.body.update,
+                                        note:""
+                                    };
+                                    await WareHouseReceipt.create(_tempData);
+                                }
                             }
                             return res.json({ s: 0, msg: "Thành công",data:small});
                         }
@@ -217,7 +251,7 @@ function WareHouseExportController() {
                                                 "store": {"code":req.body.exportFrom.code,"name":req.body.exportFrom.name},
                                                 "note":""
                                             };
-                                            let query = {"product.code":productExport.product.code,"unit.code":productExport.unit.code}
+                                            let query = {"product.code":productExport.product.code,"unit.code":productExport.unit.code,"store.code":req.body.exportFrom.code}
                                             var _temp = await Inventory.findOne(query);
                                             if(_temp){
                                                 _temp.amount = Number(_temp.amount)-Number(productExport.amount);

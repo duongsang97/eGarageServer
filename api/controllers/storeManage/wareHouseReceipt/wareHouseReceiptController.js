@@ -15,7 +15,7 @@ function WareHouseReceiptController() {
      * @param res
      * @returns {Promise<any>}
      */
-    list: (req, res) => {
+    list: async (req, res) => {
         try{
             if(req.user){
                 let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
@@ -23,21 +23,36 @@ function WareHouseReceiptController() {
                 let hostId= req.user.hostId||req.user._id;
                 let garageSelected =req.query.garageSelected||"";
                 let keyword =req.query.keyword||"";
-                WareHouseReceipt.find({
-                    $and: [
-                        {
-                            $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
-                        },
-                        {"recordStatus":1, "hostId":hostId,"ofGarage.code":garageSelected}
-                    ]
-                }).skip((perPage * page) - perPage).limit(perPage).sort({"createdAt":-1}).exec((err, items) => {
-                    WareHouseReceipt.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
-                      if (err){
-                        return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
-                      }
-                        return res.json({ s: 0, msg: "Thành công",data:items||[], listCount: (items||[]).length});
+                var listStore = await Stores.find({"ofGarage.code":garageSelected,"recordStatus":1, "hostId":hostId});
+                if(listStore){
+                    let keySearch = [];
+                    listStore.forEach(element=>{
+                        if(element.ofGarage){
+                            keySearch.push({"receiptTo.code":element.code})
+                        }
                     });
-                  });
+                    WareHouseReceipt.find({
+                        $and: [
+                            {
+                                $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
+                            },
+                            {
+                               $or:keySearch, 
+                            },
+                            {"recordStatus":1, "hostId":hostId,"ofGarage.code":garageSelected}
+                        ]
+                    }).skip((perPage * page) - perPage).limit(perPage).sort({"createdAt":-1}).exec((err, items) => {
+                        WareHouseReceipt.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                          if (err){
+                            return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
+                          }
+                            return res.json({ s: 0, msg: "Thành công",data:items||[], listCount: (items||[]).length});
+                        });
+                      });
+                }
+                else{
+                    return res.json({ s: 0, msg: "Thành công",data:[], listCount:0});
+                }
             }
             else{
                 res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
@@ -47,7 +62,7 @@ function WareHouseReceiptController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
-    getOne: (req, res) => {
+    getOne: async (req, res) => {
         try{
             if(req.user){
                 let garageSelected =req.query.garageSelected||"";
@@ -55,16 +70,32 @@ function WareHouseReceiptController() {
                 let page = req.query.page || 1; // trang
                 let hostId = WareHouseReceipt.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let keyword = req.query.keyword||"";
-                WareHouseReceipt.findOne({
-                    $and: [
-                        {
-                            $or:[{ "_id" : ObjectId.isValid(keyword)?WareHouseReceipt.ObjectId(keyword):null},{ "code" : keyword}]
-                        },
-                        {"recordStatus":1, "hostId":hostId,"ofGarage.code":garageSelected}
-                    ]
-                }).then(result=>{
-                    return res.json({ s: 0, msg: "Thành công",data:result||{},listCount:(result||{}).length});
-                });
+                var listStore = await Stores.find({"ofGarage.code":garageSelected,"recordStatus":1, "hostId":hostId});
+                if(listStore){
+                    let keySearch = [];
+                    listStore.forEach(element=>{
+                        if(element.ofGarage){
+                            keySearch.push({"receiptTo.code":element.code})
+                        }
+                    });
+                    WareHouseReceipt.findOne({
+                        $and: [
+                            {
+                                $or:[{ "_id" : ObjectId.isValid(keyword)?WareHouseReceipt.ObjectId(keyword):null},{ "code" : keyword}]
+                            },
+                            {
+                                $or:keySearch
+                            },
+                            {"recordStatus":1, "hostId":hostId,"ofGarage.code":garageSelected}
+                        ]
+                    }).then(result=>{
+                        return res.json({ s: 0, msg: "Thành công",data:result||{},listCount:(result||{}).length});
+                    });
+                }
+                else{
+                    return res.json({ s: 0, msg: "Thành công",data:[], listCount:0});
+                }
+                
             }
             else{
                 res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
@@ -118,7 +149,7 @@ function WareHouseReceiptController() {
                                             "store": {"code":small.receiptTo.code,"name":small.receiptTo.name},
                                             "note":""
                                         };
-                                        let query = {"product.code":productReceipt.product.code,"unit.code":productReceipt.unit.code}
+                                        let query = {"product.code":productReceipt.product.code,"unit.code":productReceipt.unit.code,"store.code":small.receiptTo.code}
                                         var _temp = await Inventory.findOne(query);
                                         if(_temp){
                                             _temp.amount = Number(_temp.amount)+Number(productReceipt.amount);
@@ -188,7 +219,7 @@ function WareHouseReceiptController() {
                                             "store": {"code":req.body.receiptTo.code,"name":req.body.receiptTo.name},
                                             "note":""
                                         };
-                                        let query = {"product.code":productReceipt.product.code,"unit.code":productReceipt.unit.code}
+                                        let query = {"product.code":productReceipt.product.code,"unit.code":productReceipt.unit.code,"store.code":req.body.receiptTo.code}
                                         var _temp = await Inventory.findOne(query);
                                         if(_temp){
                                             _temp.amount = Number(_temp.amount)+Number(productReceipt.amount);
