@@ -32,7 +32,7 @@ const EmployeeInfo = mongoose.Schema(
     //Thông tin TK ngân hàng
     bankNo: { type: String}, // số tk ngân hàng
     bankName: { type: String}, // Tên ngân hàng
-    bankUserName: { type: Date}, // Tên chủ sở hữu
+    bankUserName: { type: String}, // Tên chủ sở hữu
 
     note: { type: String}, 
     createdBy: { type: mongoose.Types.ObjectId, ref: 'g_User',immutable: true, select: false}, // liên kêt với profile
