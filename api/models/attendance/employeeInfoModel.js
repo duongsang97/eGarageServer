@@ -28,6 +28,7 @@ const EmployeeInfo = mongoose.Schema(
     email: { type: String}, // Email
     birthday: { type: Date}, // ngày sinh
     address: { type: String}, // địa chị
+    gender: { type: Object}, //giới tính
 
     //Thông tin TK ngân hàng
     bankNo: { type: String}, // số tk ngân hàng
