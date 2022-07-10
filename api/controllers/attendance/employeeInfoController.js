@@ -178,13 +178,12 @@ function EmployeeInfoController() {
         },
         update: (req, res) => {
             try {
-                if (req.user && req.body) {
-
-                    if (req.body._id && ObjectId.isValid(req.body._id)) {
-                        let data = JSON.parse((req.body.data) || "");
+                let data = JSON.parse((req.body.data) || "");
+                let avatar = (req.files && req.files.avatar) ? req.files.avatar : [];
+                let files = (req.files && req.files.fileId) ? req.files.fileId : [];
+                if (req.user && data) {
+                    if (data._id && ObjectId.isValid(data._id)) {
                         data.updatedBy = EmployeeInfo.ObjectId(req.user._id);
-                        let avatar = (req.files && req.files.avatar) ? req.files.avatar : [];
-                        let files = (req.files && req.files.fileId) ? req.files.fileId : [];
                         try {
                             // xử lý hình ảnh garage
                             if (avatar && avatar.length > 0) {
