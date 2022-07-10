@@ -94,6 +94,7 @@ router.route('/productcate/getOne').get(productCateController.getOne);
 
 router.route('/product').get(productController.list).post(upload.fields([{name: 'data'},{name: 'files', maxCount: 10}]),productController.create).put(upload.fields([{name: 'data'},{name: 'files', maxCount: 10}]),productController.update).delete(productController.delete);
 router.route('/product/getOne').get(productController.getOne);
+router.route('/product/getProductAmount').get(productController.getProductAmount); // lấy danh sách sản phẩm, kèm theo số lượng hàng trong kho
 
 router.route('/suppliers').get(supplierController.list).post(supplierController.create).put(supplierController.update);
 router.route('/suppliers/getOne').get(supplierController.getOne);

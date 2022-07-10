@@ -71,6 +71,50 @@ function  ProductController() {
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
         }
     },
+    getProductAmount:(req, res)=>{
+        try{
+            if(req.user){
+                let perPage = 50; // số lượng sản phẩm xuất hiện trên 1 page
+                let page = req.params.page || 1; // trang
+                let hostId= req.user.hostId||req.user._id;
+                let garageSelected =req.query.garageSelected||"";
+                let keyword =req.query.keyword||"";
+                Product.aggregate([
+                    {$match:{
+                            $and: [
+                                {
+                                    $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
+                                },
+                                {"recordStatus":1, "hostId": Product.ObjectId(hostId)}
+                            ]
+                        }
+                    },
+                    {
+                        $lookup:{
+                            from: "g_inventories", // collection name in db
+                            localField: "code",
+                            foreignField: "product.code",
+                            as: "inventory"
+                        }
+                    },
+                ]).exec((err, items) => {
+                    Product.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                      if (err){
+                        return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
+                      }
+                        return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
+                    });
+                });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
+        }
+        catch(ex){
+            console.log(ex);
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:null});
+        }
+    },
     create: async (req, res) => {
         try{
             let data = JSON.parse((req.body.data)||{});
