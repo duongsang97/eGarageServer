@@ -51,9 +51,10 @@ const upload = multer({ storage: storage })
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
 router.route('/appdata/getProvince').get(appDataeController.getProvince);
+router.route('/appdata/getDistrict').get(appDataeController.getDistrict);
+router.route('/appdata/getWards').get(appDataeController.getWards);
+
 router.use(LoginController.checkLogin);
-
-
 router.route('/garage').get(garageController.list)
     .post(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.create)
     .put(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.update);
