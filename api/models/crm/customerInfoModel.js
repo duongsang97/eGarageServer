@@ -19,6 +19,7 @@ const CustomerInfo = mongoose.Schema(
     idPlace: { type: String}, // nơi cấp cmnd
     idBank: { type: String}, // STK ngân hàng
     bankName: { type: String}, // tên ngân hàng
+    redemptionPoints: { type: Number}, // Điểm đổi thưởng
     note: { type: String}, 
     createdBy: { type: mongoose.Types.ObjectId, ref: 'g_User',immutable: true, select: false}, // liên kêt với profile
     
