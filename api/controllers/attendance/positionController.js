@@ -126,9 +126,12 @@ function PositionController() {
             try {
                 if (req.user && req.body) {
                     if(req.body._id && ObjectId.isValid(req.body._id)){
-                        req.body.updatedBy = Position.ObjectId(req.user._id);
+                        let data = req.body || {};
+                        data.updatedBy = Position.ObjectId(req.user._id);
                         //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                        Position.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
+                        
+
+                        Position.findByIdAndUpdate(data._id, data, function (err, doc, re) {
                             if (err) {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
