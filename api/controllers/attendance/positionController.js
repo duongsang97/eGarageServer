@@ -125,16 +125,22 @@ function PositionController() {
         update: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    req.body.updatedBy = Position.ObjectId(req.user._id);
-                    //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    Position.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
-                        if (err) {
-                            return res.json({ s: 1, msg: "Thất bại", data: err });
-                        }
-                        else {
-                            return res.json({ s: 0, msg: "Thành công", data: data });
-                        }
-                    });
+                    if(req.body._id && ObjectId.isValid(req.body._id)){
+                        req.body.updatedBy = Position.ObjectId(req.user._id);
+                        //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
+                        Position.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
+                            if (err) {
+                                return res.json({ s: 1, msg: "Thất bại", data: err });
+                            }
+                            else {
+                                return res.json({ s: 0, msg: "Thành công", data: data });
+                            }
+                        });
+                    }
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                    }
+                    
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -149,24 +155,30 @@ function PositionController() {
                 if (req.user && req.body) {
                     req.body.updatedBy = Position.ObjectId(req.user._id);
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    Position.findById(req.body._id, function (err, doc) {
-                        if (err) {
-                            return res.json({ s: 1, msg: "Thất bại", data: err });
-                        }
-                        else {
-                            doc.recordStatus = 0;
-                            Position.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
-                                if (err) {
-                                    return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
-                                }
-                                else {
-                                    doc.recordStatus = 0;
-
-                                    return res.json({ s: 0, msg: "Thành công", data: doc });
-                                }
-                            });
-                        }
-                    });
+                    if(req.body._id && ObjectId.isValid(req.body._id)){
+                        Position.findById(req.body._id, function (err, doc) {
+                            if (err) {
+                                return res.json({ s: 1, msg: "Thất bại", data: err });
+                            }
+                            else {
+                                doc.recordStatus = 0;
+                                Position.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
+                                    if (err) {
+                                        return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
+                                    }
+                                    else {
+                                        doc.recordStatus = 0;
+    
+                                        return res.json({ s: 0, msg: "Thành công", data: doc });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                    }
+                    
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });

@@ -126,7 +126,7 @@ function EmployeeInfoController() {
             try {
                 if (req.user && req.body) {
                     let hostId = req.user.hostId || req.user._id;
-                    let data = JSON.parse((req.body.data)||"");
+                    let data = JSON.parse((req.body.data) || "");
                     data.createdBy = EmployeeInfo.ObjectId(req.user._id);
                     data.createdDate = Date.now();
                     data.hostId = EmployeeInfo.ObjectId(hostId);
@@ -141,7 +141,7 @@ function EmployeeInfoController() {
                         // xử lý logo
                         if (files && files.length) {
                             data.fileId = [];
-                            for(let i = 0; i < files.length ; i ++){
+                            for (let i = 0; i < files.length; i++) {
                                 data.fileId.push(files[i].path);
                             }
                         }
@@ -179,35 +179,42 @@ function EmployeeInfoController() {
         update: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    let data = JSON.parse((req.body.data)||"");
-                    data.updatedBy = EmployeeInfo.ObjectId(req.user._id);
-                    let avatar = (req.files && req.files.avatar) ? req.files.avatar : [];
-                    let files = (req.files && req.files.fileId) ? req.files.fileId : [];
-                    try {
-                        // xử lý hình ảnh garage
-                        if (avatar && avatar.length > 0) {
-                            data.avatar = avatar[0].path;
+
+                    if (req.body._id && ObjectId.isValid(req.body._id)) {
+                        let data = JSON.parse((req.body.data) || "");
+                        data.updatedBy = EmployeeInfo.ObjectId(req.user._id);
+                        let avatar = (req.files && req.files.avatar) ? req.files.avatar : [];
+                        let files = (req.files && req.files.fileId) ? req.files.fileId : [];
+                        try {
+                            // xử lý hình ảnh garage
+                            if (avatar && avatar.length > 0) {
+                                data.avatar = avatar[0].path;
+                            }
+                            // xử lý logo
+                            if (files && files.length) {
+                                data.fileId = data.fileId || [];
+                                files.forEach(fi => {
+                                    data.fileId.push(fi.path);
+                                });
+                            }
                         }
-                        // xử lý logo
-                        if (files && files.length) {
-                            data.fileId = data.fileId || [];
-                            files.forEach(fi => {
-                                data.fileId.push(fi.path);
-                            });
+                        catch (ex) {
+                            console.log(ex);
                         }
+                        //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
+                        EmployeeInfo.findByIdAndUpdate(data._id, data, function (err, doc, re) {
+                            if (err) {
+                                return res.json({ s: 1, msg: "Thất bại", data: err });
+                            }
+                            else {
+                                return res.json({ s: 0, msg: "Thành công", data: data });
+                            }
+                        });
                     }
-                    catch (ex) {
-                        console.log(ex);
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                     }
-                    //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    EmployeeInfo.findByIdAndUpdate(data._id, data, function (err, doc, re) {
-                        if (err) {
-                            return res.json({ s: 1, msg: "Thất bại", data: err });
-                        }
-                        else {
-                            return res.json({ s: 0, msg: "Thành công", data: data });
-                        }
-                    });
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -220,26 +227,31 @@ function EmployeeInfoController() {
         delete: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    req.body.updatedBy = EmployeeInfo.ObjectId(req.user._id);
-                    //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    EmployeeInfo.findById(req.body._id, function (err, doc) {
-                        if (err) {
-                            return res.json({ s: 1, msg: "Thất bại", data: err });
-                        }
-                        else {
-                            doc.recordStatus = 0;
-                            EmployeeInfo.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
-                                if (err) {
-                                    return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
-                                }
-                                else {
-                                    doc.recordStatus = 0;
+                    if (req.body._id && ObjectId.isValid(req.body._id)) {
+                        req.body.updatedBy = EmployeeInfo.ObjectId(req.user._id);
+                        EmployeeInfo.findById(req.body._id, function (err, doc) {
+                            if (err) {
+                                return res.json({ s: 1, msg: "Thất bại", data: err });
+                            }
+                            else {
+                                doc.recordStatus = 0;
+                                EmployeeInfo.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
+                                    if (err) {
+                                        return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
+                                    }
+                                    else {
+                                        doc.recordStatus = 0;
 
-                                    return res.json({ s: 0, msg: "Thành công", data: doc });
-                                }
-                            });
-                        }
-                    });
+                                        return res.json({ s: 0, msg: "Thành công", data: doc });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                    }
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });

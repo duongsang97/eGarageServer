@@ -66,7 +66,7 @@ function CustomerInfoController() {
             try {
                 if (req.user) {
                     let hostId = CustomerInfo.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
-                    let keyword = req.query.keyword||"";
+                    let keyword = req.query.keyword || "";
                     CustomerInfo.findOne({
                         $and: [
                             {
@@ -123,17 +123,24 @@ function CustomerInfoController() {
         update: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    let hostId = req.user.hostId || req.user._id;
-                    req.body.updatedBy = CustomerInfo.ObjectId(req.user._id);
-                    //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    CustomerInfo.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
-                        if (err) {
-                            return res.json({ s: 1, msg: "Thất bại", data: err });
-                        }
-                        else {
-                            return res.json({ s: 0, msg: "Thành công", data: doc });
-                        }
-                    });
+
+                    if (req.body._id && ObjectId.isValid(req.body._id)) {
+
+                        let hostId = req.user.hostId || req.user._id;
+                        req.body.updatedBy = CustomerInfo.ObjectId(req.user._id);
+                        //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
+                        CustomerInfo.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
+                            if (err) {
+                                return res.json({ s: 1, msg: "Thất bại", data: err });
+                            }
+                            else {
+                                return res.json({ s: 0, msg: "Thành công", data: doc });
+                            }
+                        });
+                    }
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                    }
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -148,24 +155,30 @@ function CustomerInfoController() {
                 if (req.user && req.body) {
                     let hostId = req.user.hostId || req.user._id;
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    CustomerInfo.findById(req.body._id, function (err, doc) {
-                        if (err) {
-                            return res.json({ s: 1, msg: "Thất bại", data: err });
-                        }
-                        else {
-                            doc.recordStatus = 0;
-                            CustomerInfo.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
-                                if (err) {
-                                    return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
-                                }
-                                else {
-                                    doc.recordStatus = 0;
+                    if (req.body._id && ObjectId.isValid(req.body._id)) {
+                        CustomerInfo.findById(req.body._id, function (err, doc) {
+                            if (err) {
+                                return res.json({ s: 1, msg: "Thất bại", data: err });
+                            }
+                            else {
+                                doc.recordStatus = 0;
+                                CustomerInfo.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
+                                    if (err) {
+                                        return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
+                                    }
+                                    else {
+                                        doc.recordStatus = 0;
 
-                                    return res.json({ s: 0, msg: "Thành công", data: doc });
-                                }
-                            });
-                        }
-                    });
+                                        return res.json({ s: 0, msg: "Thành công", data: doc });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                    }
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
