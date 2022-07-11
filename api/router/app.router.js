@@ -23,6 +23,7 @@ const InventoryController = require("../controllers/storeManage/inventory/invent
 const ColorsController = require("../controllers/colors/colorController");
 const AutoMakerController = require("../controllers/autoMakers/autoMakerController");
 const CarCateController = require("../controllers/carCate/carCateController");
+const VehicleController = require("../controllers/vehicel/vehicelController");
 
 const employeeInfoController = require("../controllers/attendance/employeeInfoController");
 const positionController = require("../controllers/attendance/positionController");
@@ -150,6 +151,10 @@ router.route('/automaker/getOne').get(AutoMakerController.getOne);
 // api quản lý dòng xe, loại xe
 router.route('/carCate').get(CarCateController.list).post(CarCateController.create).put(CarCateController.update); // phiếu nhập
 router.route('/carcate/getOne').get(CarCateController.getOne);
+
+// api quản lý xe
+router.route('/vehicle').get(VehicleController.list).post(VehicleController.create).put(VehicleController.update); // phiếu nhập
+router.route('/vehicle/getOne').get(VehicleController.getOne);
 
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});

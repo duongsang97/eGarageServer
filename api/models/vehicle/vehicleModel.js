@@ -1,11 +1,12 @@
 "use strict";
 const mongoose = require("mongoose");
-const serverData = require("../../../data/serverData");
+const serverData = require("../../data/serverData");
 const randomstring = require("randomstring");
 const Vehicle = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
+    carOwner:{type : Object,default:{"code":"none","name":"none"}}, // chủ xe {"code":"mã","name":"tên chủ xe"}
     licensePlates: { type: String, index: { unique: true }}, // biển số
     automaker:{type:Object,default:{"code":"none","name":"name"}}, // hãng xe
     carModel:{type:Object,default:{"code":"none","name":"name"}}, // dòng xe , đi theo hãng xe

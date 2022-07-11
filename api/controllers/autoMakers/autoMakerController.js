@@ -61,12 +61,13 @@ function AutomakerController() {
                 let page = req.query.page || 1; // trang
                 let hostId = Automaker.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let keyword = req.query.keyword||"";
+                let keySearch= [{ "_id" : Automaker.ObjectId(keyword)},{ "code" : keyword}];
                 Automaker.aggregate([
                     {
                         $match:{
                             $and: [
                                 {
-                                    $or:[{ "_id" : Automaker.ObjectId(keyword)},{ "code" : keyword}]
+                                    $or:keySearch
                                 },
                                 {"recordStatus":1, "hostId": Automaker.ObjectId(hostId)}
                             ]
