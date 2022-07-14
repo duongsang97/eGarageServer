@@ -26,6 +26,10 @@ const bankAccountController = require("../controllers/payment/bankAccountControl
 const payslipController = require("../controllers/payment/payslipController");
 const receiptsController = require("../controllers/payment/receiptsController");
 
+
+//common
+const commonController = require("../controllers/commonController");
+
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -132,6 +136,12 @@ router.route('/receipts').get(receiptsController.list).post(receiptsController.c
 .put(receiptsController.update).delete(receiptsController.delete);
 router.route('/receipts/getone').get(receiptsController.getOne);
 
+
+router.route('/common/getworktype').get(commonController.getWorkType);
+router.route('/common/getworkstatus').get(commonController.getWorkStatus);
+router.route('/common/getpaytype').get(commonController.getPayType);
+router.route('/common/getreceiptsreason').get(commonController.getReceiptsReason);
+router.route('/common/getpayslipreason').get(commonController.getPayslipReason);
 
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});

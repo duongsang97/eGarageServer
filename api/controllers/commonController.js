@@ -1,5 +1,5 @@
 "use strict";
-const serverData = require("../../data/serverData");
+const serverData = require("../data/serverData");
 
 function CommonController() {
     return {
@@ -32,6 +32,57 @@ function CommonController() {
                     return res.json({
                         s: 0, msg: "Thành công", data: serverData.workStatus,
                         listCount: serverData.workStatus.length
+                    });
+
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
+        getPayType: (req, res) => {
+            try {
+                if (req.user) {
+                    return res.json({
+                        s: 0, msg: "Thành công", data: serverData.payType,
+                        listCount: serverData.payType.length
+                    });
+
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
+        getReceiptsReason: (req, res) => {
+            try {
+                if (req.user) {
+                    return res.json({
+                        s: 0, msg: "Thành công", data: serverData.receiptsReason,
+                        listCount: serverData.receiptsReason.length
+                    });
+
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
+        getPayslipReason: (req, res) => {
+            try {
+                if (req.user) {
+                    return res.json({
+                        s: 0, msg: "Thành công", data: serverData.payslipReason,
+                        listCount: serverData.payslipReason.length
                     });
 
                 }

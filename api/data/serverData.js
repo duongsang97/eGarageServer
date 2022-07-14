@@ -42,4 +42,16 @@ module.exports = {
         {code:"01",name:"Đang hoạt động"},
         {code:"02",name:"Đã nghỉ việc"}
     ],
+    payType:[
+        {code:"01",name:"Tiền mặt"},
+        {code:"02",name:"Chuyển khoản"}
+    ],
+    payslipReason:[
+        {code:"01",name:"Nhập hàng"},
+        {code:"02",name:"Lý do khác"}
+    ],
+    receiptsReason:[
+        {code:"01",name:"Thanh toán hóa đơn"},
+        {code:"02",name:"Lý do khác"}
+    ],
 };
