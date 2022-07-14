@@ -16,8 +16,16 @@ const supplierController = require("../controllers/storeManage/suppliers/supplie
 const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
 const storesController = require("../controllers/storeManage/stores/storesController");
+
+//profile
 const employeeInfoController = require("../controllers/attendance/employeeInfoController");
 const positionController = require("../controllers/attendance/positionController");
+
+//payment
+const bankAccountController = require("../controllers/payment/bankAccountController");
+const payslipController = require("../controllers/payment/payslipController");
+const receiptsController = require("../controllers/payment/receiptsController");
+
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -111,6 +119,18 @@ router.route('/emp/getworkstatus').get(employeeInfoController.getWorkStatus);
 router.route('/pos').get(positionController.list).post(positionController.create)
 .put(positionController.update).delete(positionController.delete);
 router.route('/pos/getone').get(positionController.getOne);
+
+router.route('/bankacc').get(bankAccountController.list).post(bankAccountController.create)
+.put(bankAccountController.update).delete(bankAccountController.delete);
+router.route('/bankacc/getone').get(bankAccountController.getOne);
+
+router.route('/payslip').get(payslipController.list).post(payslipController.create)
+.put(payslipController.update).delete(payslipController.delete);
+router.route('/payslip/getone').get(payslipController.getOne);
+
+router.route('/receipts').get(receiptsController.list).post(receiptsController.create)
+.put(receiptsController.update).delete(receiptsController.delete);
+router.route('/receipts/getone').get(receiptsController.getOne);
 
 
 // trả về 404 nếu không có trong router
