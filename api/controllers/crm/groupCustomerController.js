@@ -77,7 +77,12 @@ function GroupCustomerController() {
                             { "recordStatus": 1, "hostId": hostId }
                         ]
                     }).then(result => {
-                        return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
+                        if (result) {
+                            return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
+                        }
+                        else{
+                            res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                        }
                     });
                 }
                 else {
@@ -163,17 +168,22 @@ function GroupCustomerController() {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
                             else {
-                                doc.recordStatus = 0;
-                                GroupCustomer.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
-                                    if (err) {
-                                        return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
-                                    }
-                                    else {
-                                        doc.recordStatus = 0;
-    
-                                        return res.json({ s: 0, msg: "Thành công", data: doc });
-                                    }
-                                });
+                                if(doc){
+                                    doc.recordStatus = 0;
+                                    GroupCustomer.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
+                                        if (err) {
+                                            return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
+                                        }
+                                        else {
+                                            doc.recordStatus = 0;
+        
+                                            return res.json({ s: 0, msg: "Thành công", data: doc });
+                                        }
+                                    });
+                                }
+                                else {
+                                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                                }
                             }
                         });
                     }

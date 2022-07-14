@@ -1,12 +1,12 @@
 "use strict";
-const Promotion = require("../../models/promotion/promotionModel").Promotion;
+const Payslip = require("../../models/payment/payslipModel").Payslip;
 var Excel = require('exceljs');
 var formidable = require('formidable');
 const serverData = require("../../data/serverData");
 const fs = require('fs');
 const ObjectId = require('mongoose').Types.ObjectId;
 
-function PromotionController() {
+function PayslipController() {
     return {
         /** @memberOf ServiceManagerController
          * @description List all building
@@ -21,9 +21,13 @@ function PromotionController() {
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
                     let keyword = req.query.keyword || "";
+                    let garageSelected =req.query.garageSelected||"";
                     if (perPage === 0 || page === 0) {
-                        Promotion.find({
+                        Payslip.find({
                             $and: [
+                                {
+                                    $or: [{"ofGarage":{}},{"ofGarage":null},{"ofGarage.code":garageSelected}],
+                                },
                                 {
                                     $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
                                 },
@@ -31,7 +35,7 @@ function PromotionController() {
                                 { "hostId": hostId },
                             ]
                         }).exec((err, items) => {
-                            Promotion.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                            Payslip.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                                 if (err) {
                                     return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
                                 }
@@ -40,13 +44,13 @@ function PromotionController() {
                         });
                     }
                     else {
-                        Promotion.find({
+                        Payslip.find({
                             $and: [
                                 { "recordStatus": 1 },
                                 { "hostId": hostId },
                             ]
                         }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
-                            Promotion.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                            Payslip.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                                 if (err) {
                                     return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
                                 }
@@ -67,58 +71,24 @@ function PromotionController() {
         getOne: (req, res) => {
             try {
                 if (req.user) {
-                    let hostId = Promotion.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
+                    let hostId = Payslip.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
                     let keyword = req.query.keyword || "";
-                    Promotion.findOne({
+                    Payslip.findOne({
                         $and: [
                             {
-                                $or: [{ "_id": ObjectId.isValid(keyword) ? Promotion.ObjectId(keyword) : null }, { "code": keyword }]
+                                $or: [{ "_id": ObjectId.isValid(keyword) ? Payslip.ObjectId(keyword) : null }, { "code": keyword }]
                             },
                             { "recordStatus": 1, "hostId": hostId }
                         ]
                     }).then(result => {
-                        if(result){
+                        
+                        if (result) {
                             return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
                         }
-                        else {
+                        else{
                             res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                         }
-                        
                     });
-                }
-                else {
-                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
-                }
-            }
-            catch (ex) {
-                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
-            }
-        },
-        getPromotionType: (req, res) => {
-            try {
-                if (req.user) {
-                    return res.json({
-                        s: 0, msg: "Thành công", data: serverData.promotionType,
-                        listCount: serverData.promotionType.length
-                    });
-
-                }
-                else {
-                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
-                }
-            }
-            catch (ex) {
-                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
-            }
-        },
-        getValueType: (req, res) => {
-            try {
-                if (req.user) {
-                    return res.json({
-                        s: 0, msg: "Thành công", data: serverData.promotionValueType,
-                        listCount: serverData.promotionValueType.length
-                    });
-
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -132,13 +102,13 @@ function PromotionController() {
             try {
                 if (req.user && req.body) {
                     let hostId = req.user.hostId || req.user._id;
-                    req.body.createdBy = Promotion.ObjectId(req.user._id);
+                    req.body.createdBy = Payslip.ObjectId(req.user._id);
                     req.body.createdDate = Date.now();
-                    req.body.hostId = Promotion.ObjectId(hostId);
+                    req.body.hostId = Payslip.ObjectId(hostId);
                     if (!req.body.code) {
-                        req.body.code = await Promotion.GenerateKeyCode();
+                        req.body.code = await Payslip.GenerateKeyCode();
                     }
-                    Promotion.create(req.body, function (err, small) {
+                    Payslip.create(req.body, function (err, small) {
                         if (err) {
                             let errMsg = "";
                             if (err.code === 11000) {
@@ -166,9 +136,10 @@ function PromotionController() {
             try {
                 if (req.user && req.body) {
                     if(req.body._id && ObjectId.isValid(req.body._id)){
-                        req.body.updatedBy = Promotion.ObjectId(req.user._id);
+                        let hostId = req.user.hostId || req.user._id;
+                        req.body.updatedBy = Payslip.ObjectId(req.user._id);
                         //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                        Promotion.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
+                        Payslip.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
                             if (err) {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
@@ -180,7 +151,7 @@ function PromotionController() {
                     else {
                         res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                     }
-                   
+                    
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -193,17 +164,18 @@ function PromotionController() {
         delete: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    req.body.updatedBy = Promotion.ObjectId(req.user._id);
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
                     if(req.body._id && ObjectId.isValid(req.body._id)){
-                        Promotion.findById(req.body._id, function (err, doc) {
+                        let hostId = req.user.hostId || req.user._id;
+                        req.body.updatedBy = Payslip.ObjectId(req.user._id);
+                        Payslip.findById(req.body._id, function (err, doc) {
                             if (err) {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
                             else {
                                 if(doc){
                                     doc.recordStatus = 0;
-                                    Promotion.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
+                                    Payslip.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
                                         if (err) {
                                             return res.json({ s: 1, msg: "Đã có lỗi xảy ra khi xóa dữ liệu!", data: err });
                                         }
@@ -220,6 +192,9 @@ function PromotionController() {
                             }
                         });
                     }
+                    else {
+                        res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                    }
                     
                 }
                 else {
@@ -233,4 +208,4 @@ function PromotionController() {
     };
 }
 
-module.exports = new PromotionController();
+module.exports = new PayslipController();

@@ -25,8 +25,20 @@ const AutoMakerController = require("../controllers/autoMakers/autoMakerControll
 const CarCateController = require("../controllers/carCate/carCateController");
 const VehicleController = require("../controllers/vehicel/vehicelController");
 
+
+//profile
 const employeeInfoController = require("../controllers/attendance/employeeInfoController");
 const positionController = require("../controllers/attendance/positionController");
+
+//payment
+const bankAccountController = require("../controllers/payment/bankAccountController");
+const payslipController = require("../controllers/payment/payslipController");
+const receiptsController = require("../controllers/payment/receiptsController");
+
+
+//common
+const commonController = require("../controllers/commonController");
+
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -129,7 +141,25 @@ router.route('/pos').get(positionController.list).post(positionController.create
 .put(positionController.update).delete(positionController.delete);
 router.route('/pos/getone').get(positionController.getOne);
 
+router.route('/bankacc').get(bankAccountController.list).post(bankAccountController.create)
+.put(bankAccountController.update).delete(bankAccountController.delete);
+router.route('/bankacc/getone').get(bankAccountController.getOne);
 
+router.route('/payslip').get(payslipController.list).post(payslipController.create)
+.put(payslipController.update).delete(payslipController.delete);
+router.route('/payslip/getone').get(payslipController.getOne);
+
+router.route('/receipts').get(receiptsController.list).post(receiptsController.create)
+.put(receiptsController.update).delete(receiptsController.delete);
+router.route('/receipts/getone').get(receiptsController.getOne);
+
+
+router.route('/common/getworktype').get(commonController.getWorkType);
+router.route('/common/getworkstatus').get(commonController.getWorkStatus);
+router.route('/common/getpaytype').get(commonController.getPayType);
+router.route('/common/getreceiptsreason').get(commonController.getReceiptsReason);
+router.route('/common/getpayslipreason').get(commonController.getPayslipReason);
+x
 router.route('/warehousereceipt').get(WareHouseReceiptController.list).post(WareHouseReceiptController.create).put(WareHouseReceiptController.update); // phiếu nhập
 router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);
 

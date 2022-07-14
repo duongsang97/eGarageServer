@@ -67,8 +67,8 @@ function ProfileController() {
     create: async (req, res) => {
         try{
             let data = JSON.parse((req.body.data)||{});
-            let files = (req.files &&  req.files.files)?req.files.files:[];
-            let logos = (req.files &&  req.files.logo)?req.files.logo:[];
+            let files = (req.files &&  req.files.files)?req.files.files:null;
+            let logos = (req.files &&  req.files.logo)?req.files.logo:null;
             if(req.user && data){
                 data.createdBy = Garage.ObjectId(req.user._id);
                 data.hostId = Garage.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
@@ -127,8 +127,9 @@ function ProfileController() {
     update: (req, res) => {
         try{
             let data = JSON.parse((req.body.data)||{});
-            let files = (req.files &&  req.files.files)?req.files.files:[];
-            let logos = (req.files &&  req.files.logo)?req.files.logo:[];
+            let files = (req.files &&  req.files.files)?req.files.files:null;
+            let logos = (req.files &&  req.files.logo)?req.files.logo:null;
+            console.log(req.files)
             if(req.user && data){
                 data.updatedBy = Garage.ObjectId(req.user._id);
                  // xử lý hình ảnh tải lên
