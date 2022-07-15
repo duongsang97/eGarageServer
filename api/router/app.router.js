@@ -159,7 +159,6 @@ router.route('/common/getworkstatus').get(commonController.getWorkStatus);
 router.route('/common/getpaytype').get(commonController.getPayType);
 router.route('/common/getreceiptsreason').get(commonController.getReceiptsReason);
 router.route('/common/getpayslipreason').get(commonController.getPayslipReason);
-x
 router.route('/warehousereceipt').get(WareHouseReceiptController.list).post(WareHouseReceiptController.create).put(WareHouseReceiptController.update); // phiếu nhập
 router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);
 
