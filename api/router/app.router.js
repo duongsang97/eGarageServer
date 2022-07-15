@@ -113,12 +113,10 @@ router.route('/stores/getOne').get(storesController.getOne);
 
 //chấm công
 router.route('/emp').get(employeeInfoController.list)
-.post(upload.fields([{name: 'avatar', maxCount: 1},{name: 'fileId', maxCount: 10}]),employeeInfoController.create)
-.put(upload.fields([{name: 'avatar', maxCount: 1},{name: 'fileId', maxCount: 10}]),employeeInfoController.update)
+.post(upload.fields([{name: 'avatar', maxCount: 1},{name: 'imageIDR', maxCount: 1},{name: 'imageIDL', maxCount: 1}]),employeeInfoController.create)
+.put(upload.fields([{name: 'avatar', maxCount: 1},{name: 'imageIDR', maxCount: 1},{name: 'imageIDL', maxCount: 1}]),employeeInfoController.update)
 .delete(employeeInfoController.delete);
 router.route('/emp/getone').get(employeeInfoController.getOne);
-router.route('/emp/getworktype').get(employeeInfoController.getWorkType);
-router.route('/emp/getworkstatus').get(employeeInfoController.getWorkStatus);
 
 router.route('/pos').get(positionController.list).post(positionController.create)
 .put(positionController.update).delete(positionController.delete);
