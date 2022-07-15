@@ -144,7 +144,12 @@ function PayslipController() {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
                             else {
-                                return res.json({ s: 0, msg: "Thành công", data: doc });
+                                if(doc){
+                                    return res.json({ s: 0, msg: "Thành công", data: doc });
+                                }
+                                else {
+                                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                                }
                             }
                         });
                     }
