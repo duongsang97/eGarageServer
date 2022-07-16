@@ -33,7 +33,13 @@ module.exports = {
     pathFolderUpload: "publics/uploads",
     typeTimeDatas:[{"code":"typeMinute","name":"Phút"},{"code":"typeHour","name":"Giờ"},{"code":"typeDay","name":"Ngày"},{"code":"typeMonth","name":"Tháng"},{"code":"typeYear","name":"Năm"}],
     typeLengthDatas:[{"code":"typekm","name":"Km"},{"code":"typeMile","name":"Mile"}],
-    
+    discountType:[{"code":"dis01","name":"Tự động"},{"code":"dis02","name":"Trực tiếp"}],
+    discountUnit:[{"code":"unitDis01","name":"Tiền mặt"},{"code":"unitDis02","name":"Phần trăm (%)"}],
+    ticketProcess:[{"code":"step0","name":"Đặt lịch"},{"code":"step01","name":"Tiếp nhận",},
+        {"code":"step02","name":"Kiểm tra",},{"code":"step03","name":"Báo giá",},{"code":"step04","name":"Thực hiện",},
+        {"code":"step05","name":"Nghiệm thu",},{"code":"step06","name":"Thanh toán",},{"code":"step07","name":"Hoàn thành",},
+        {"code":"step-1","name":"Hủy bỏ",}
+    ],
     workType:[
         {code:"01",name:"Chính thức"},
         {code:"02",name:"Thời vụ"}

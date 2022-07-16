@@ -16,6 +16,15 @@ const supplierController = require("../controllers/storeManage/suppliers/supplie
 const appDataeController = require("../controllers/app/appDataController");
 const unitsController = require("../controllers/storeManage/units/unitsController");
 const storesController = require("../controllers/storeManage/stores/storesController");
+const ManufacturerController = require("../controllers/storeManage/manufacturers/manufacturerController");
+const WareHouseExportController = require("../controllers/storeManage/wareHouseExport/wareHouseExportController");
+const WareHouseReceiptController = require("../controllers/storeManage/wareHouseReceipt/wareHouseReceiptController");
+const InventoryController = require("../controllers/storeManage/inventory/inventoryController");
+const ColorsController = require("../controllers/colors/colorController");
+const AutoMakerController = require("../controllers/autoMakers/autoMakerController");
+const CarCateController = require("../controllers/carCate/carCateController");
+const VehicleController = require("../controllers/vehicel/vehicelController");
+
 
 //profile
 const employeeInfoController = require("../controllers/attendance/employeeInfoController");
@@ -57,12 +66,14 @@ const upload = multer({ storage: storage })
 
 router.post("/login", LoginController.doLogin);
 router.route('/appdata').get(appDataeController.list);
+router.route('/appdata/getProvince').get(appDataeController.getProvince);
+router.route('/appdata/getDistrict').get(appDataeController.getDistrict);
+router.route('/appdata/getWards').get(appDataeController.getWards);
+
 router.use(LoginController.checkLogin);
-
-
 router.route('/garage').get(garageController.list)
-    .post(upload.fields([{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.create)
-    .put(upload.fields([{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.update);
+    .post(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.create)
+    .put(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1},{name: 'files', maxCount: 10}]),garageController.update);
 
 router.route('/garage/getOne').get(garageController.getOne);
 
@@ -100,8 +111,9 @@ router.route('/service/getOne').get(serviceController.getOne);
 router.route('/productcate').get(productCateController.list).post(productCateController.create).put(productCateController.update);
 router.route('/productcate/getOne').get(productCateController.getOne);
 
-router.route('/product').get(productController.list).post(productController.create).put(productController.update);
+router.route('/product').get(productController.list).post(upload.fields([{name: 'data'},{name: 'files', maxCount: 10}]),productController.create).put(upload.fields([{name: 'data'},{name: 'files', maxCount: 10}]),productController.update).delete(productController.delete);
 router.route('/product/getOne').get(productController.getOne);
+router.route('/product/getProductAmount').get(productController.getProductAmount); // lấy danh sách sản phẩm, kèm theo số lượng hàng trong kho
 
 router.route('/suppliers').get(supplierController.list).post(supplierController.create).put(supplierController.update);
 router.route('/suppliers/getOne').get(supplierController.getOne);
@@ -109,9 +121,14 @@ router.route('/suppliers/getOne').get(supplierController.getOne);
 router.route('/units').get(unitsController.list).post(unitsController.create).put(unitsController.update); // đơn vị tính
 router.route('/units/getOne').get(unitsController.getOne);
 
-router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update); // thông tin kho
+router.route('/stores').get(storesController.list).post(storesController.create).put(storesController.update).delete(storesController.delete); // thông tin kho
 router.route('/stores/getOne').get(storesController.getOne);
+router.route('/stores/listall').get(storesController.listAll);
+router.route('/manufacturer').get(ManufacturerController.list).post(ManufacturerController.create).put(ManufacturerController.update); // thông tin hãng sản xuất
+router.route('/manufacturer/getOne').get(ManufacturerController.getOne);
 
+router.route('/warehouseexport').get(WareHouseExportController.list).post(WareHouseExportController.create).put(WareHouseExportController.update); // phiếu xuất
+router.route('/warehouseexport/getOne').get(WareHouseExportController.getOne);
 //chấm công
 router.route('/emp').get(employeeInfoController.list)
 .post(upload.fields([{name: 'avatar', maxCount: 1},{name: 'imageIDR', maxCount: 1},{name: 'imageIDL', maxCount: 1}]),employeeInfoController.create)
@@ -141,6 +158,31 @@ router.route('/common/getworkstatus').get(commonController.getWorkStatus);
 router.route('/common/getpaytype').get(commonController.getPayType);
 router.route('/common/getreceiptsreason').get(commonController.getReceiptsReason);
 router.route('/common/getpayslipreason').get(commonController.getPayslipReason);
+router.route('/warehousereceipt').get(WareHouseReceiptController.list).post(WareHouseReceiptController.create).put(WareHouseReceiptController.update); // phiếu nhập
+router.route('/warehousereceipt/getOne').get(WareHouseReceiptController.getOne);
+
+router.route('/inventory').get(InventoryController.list);//.post(InventoryController.create).put(InventoryController.update); // tồn kho
+//router.route('/inventory/getOne').get(InventoryController.getOne);
+router.route('/inventory/getOverview').get(InventoryController.getOverview);
+
+// api quản lý màu sắc ColorsController
+router.route('/colors').get(ColorsController.list).post(ColorsController.create).put(ColorsController.update); // phiếu nhập
+router.route('/colors/getOne').get(ColorsController.getOne);
+
+// api quản lý hãng xe
+router.route('/automaker').get(AutoMakerController.list)
+  .post(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1}]),AutoMakerController.create)
+  .put(upload.fields([{name: 'data'},{name: 'logo', maxCount: 1}]),AutoMakerController.update);
+
+router.route('/automaker/getOne').get(AutoMakerController.getOne);
+
+// api quản lý dòng xe, loại xe
+router.route('/carCate').get(CarCateController.list).post(CarCateController.create).put(CarCateController.update); // phiếu nhập
+router.route('/carcate/getOne').get(CarCateController.getOne);
+
+// api quản lý xe
+router.route('/vehicle').get(VehicleController.list).post(VehicleController.create).put(VehicleController.update); // phiếu nhập
+router.route('/vehicle/getOne').get(VehicleController.getOne);
 
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});

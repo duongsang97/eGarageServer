@@ -105,7 +105,7 @@ function  SupplierController() {
         try{
             if(req.user && (req.body && req.body.hasOwnProperty("code"))){
                 req.body.updatedBy = Supplier.ObjectId(req.user._id);
-                req.body.ofHost = Supplier.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = Supplier.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 Supplier.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
                     if (err){

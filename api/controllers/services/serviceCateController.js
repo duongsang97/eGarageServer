@@ -107,7 +107,7 @@ function ServiceCateController() {
         try{
             if(req.user && (req.body)){
                 req.body.updatedBy = ServiceCate.ObjectId(req.user._id);
-                req.body.ofHost = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                req.body.hostId = ServiceCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 return ServiceCate.findById(req.body._id).exec().then((result)=>{
                     if(result){
