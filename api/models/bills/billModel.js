@@ -10,7 +10,7 @@ const Bill = mongoose.Schema(
     productDetail: {type: Array}, // sản phẩm mua chi tiết ở phía dưới
     serviceDetail: {type: Array}, // dịch vụ mua chi tiết ở phía dưới
     vehicle: {type: Object}, // thông tin xe 
-    discountType :{type,Object}, // loại chiết khấu lấy từ masterdata 
+    discountType :{type:Object}, // loại chiết khấu lấy từ masterdata 
     discountUnit:{type:Object}, // kiểu giảm giá, tiền mặt hoặc % dư liệu lấy từ masterdata // nếu discountType chọn thủ công --> mới có tác dụng
     discountValue:{type:Number}, // giá trị giảm nếu discountType chọn thủ công --> mới có tác dụng
     insurance:{type:Object}, // thông tin bảo hiểm
@@ -27,6 +27,9 @@ const Bill = mongoose.Schema(
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
     note:  { type: String}, // ghi chú 
+
+    //Thịnh add
+    totalAmountOwed:{type: Number}, // tổng số còn nợ
   },
   { versionKey: false, timestamps: true }
 );

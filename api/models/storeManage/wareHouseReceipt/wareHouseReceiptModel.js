@@ -21,6 +21,9 @@ const WareHouseReceipt = mongoose.Schema(
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
     note:  { type: String}, // ghi chú 
+
+    //Thịnh add 
+    totalAmountOwed:{type: Number}, // tổng số còn nợ
   },
   { versionKey: false, timestamps: true }
 );

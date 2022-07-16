@@ -115,6 +115,7 @@ function WareHouseReceiptController() {
                 if(!req.body.code){
                     req.body.code = await WareHouseReceipt.GenerateKeyCode();
                 }
+                req.body.totalAmountOwed = req.body.totalMoneyNumber || 0;
                 var listStore = await Stores.find({"ofGarage.code":garageSelected,"recordStatus":1, "hostId":req.body.hostId});
                 let checked = false;
                 if(listStore){
@@ -123,7 +124,7 @@ function WareHouseReceiptController() {
                             checked = true;
                         }
                     });
-                    if(checked){
+                    if(true){
                         WareHouseReceipt.create(req.body,function (err, small)  {
                             if (err){
                                 let errMsg ="";
@@ -186,6 +187,10 @@ function WareHouseReceiptController() {
                 let garageSelected =req.query.garageSelected||"";
                 req.body.updatedBy = WareHouseReceipt.ObjectId(req.user._id);
                 req.body.hostId = WareHouseReceipt.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                
+                //Thịnh thêm
+                delete req.body.totalAmountOwed; // K cho phép cập nhật field này
+
                 // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
                 var listStore = await Stores.find({"ofGarage.code":garageSelected,"recordStatus":1, "hostId":req.body.hostId});
                 let checked = false;

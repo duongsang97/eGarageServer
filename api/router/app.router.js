@@ -35,6 +35,9 @@ const bankAccountController = require("../controllers/payment/bankAccountControl
 const payslipController = require("../controllers/payment/payslipController");
 const receiptsController = require("../controllers/payment/receiptsController");
 
+//Bills
+const billController = require("../controllers/bills/billController");
+
 
 //common
 const commonController = require("../controllers/commonController");
@@ -147,10 +150,18 @@ router.route('/bankacc/getone').get(bankAccountController.getOne);
 router.route('/payslip').get(payslipController.list).post(payslipController.create)
 .put(payslipController.update).delete(payslipController.delete);
 router.route('/payslip/getone').get(payslipController.getOne);
+router.route('/payslip/getListVoucherByCode').get(payslipController.getListVoucherByCode);
 
 router.route('/receipts').get(receiptsController.list).post(receiptsController.create)
 .put(receiptsController.update).delete(receiptsController.delete);
 router.route('/receipts/getone').get(receiptsController.getOne);
+router.route('/receipts/getListBillByPhonenumber').get(receiptsController.getListBillByPhonenumber);
+
+
+router.route('/bill').get(billController.list).post(billController.create)
+.put(billController.update).delete(billController.delete);
+router.route('/bill/getone').get(billController.getOne);
+
 
 
 router.route('/common/getworktype').get(commonController.getWorkType);

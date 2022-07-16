@@ -1,5 +1,6 @@
 "use strict";
 const Payslip = require("../../models/payment/payslipModel").Payslip;
+const WareHouseReceipt = require("../../models/storeManage/wareHouseReceipt/wareHouseReceiptModel").WareHouseReceipt;
 var Excel = require('exceljs');
 var formidable = require('formidable');
 const serverData = require("../../data/serverData");
@@ -105,6 +106,21 @@ function PayslipController() {
                     req.body.createdBy = Payslip.ObjectId(req.user._id);
                     req.body.createdDate = Date.now();
                     req.body.hostId = Payslip.ObjectId(hostId);
+
+                    //kiểm tra có tồn tại mã phiếu
+                    let tempItem = await WareHouseReceipt.findOne({ "code": req.body.voucherCode, "recordStatus": 1 });
+                    if (!tempItem) {
+                        return res.json({ s: 1, msg: "Không tìm thấy phiếu xuất ["+req.body.voucherCode+"] trong hệ thống!", data: null });
+                    }
+                    
+                    if (tempItem.totalAmountOwed <= 0) {
+                        return res.json({ s: 1, msg: "Chứng từ này đã hoàn thành thanh toán!", data: null });
+                    }
+                    tempItem.totalAmountOwed -= req.body.amount;
+                    if(tempItem.totalAmountOwed < 0){
+                        return res.json({ s: 1, msg: "Số tiền cần thanh toán không được lớn hơn số tiền cần phải trả!", data: null });
+                    }
+
                     if (!req.body.code) {
                         req.body.code = await Payslip.GenerateKeyCode();
                     }
@@ -120,7 +136,24 @@ function PayslipController() {
                             return res.json({ s: 1, msg: errMsg, data: null });
                         }
                         else {
-                            return res.json({ s: 0, msg: "Thành công", data: small });
+                            if(small){
+                                WareHouseReceipt.findByIdAndUpdate(tempItem._id, tempItem, function (err2, doc2, re2) {
+                                    if (err2) {
+                                        return res.json({ s: 1, msg: "Thất bại", data: err2 });
+                                    }
+                                    else {
+                                        if(doc2){
+                                            return res.json({ s: 0, msg: "Thành công", data: small });
+                                        }
+                                        else {
+                                            res.json({ s: 1, msg: "không tìm thấy dữ liệu hóa đơn", data: null });
+                                        }
+                                    }
+                                });
+                            }
+                            else{
+                                return res.json({ s: 1, msg: "Đã có lỗi xảy ra!", data: small });
+                            }
                         }
                     });
                 }
@@ -208,6 +241,64 @@ function PayslipController() {
             }
             catch (ex) {
                 res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: ex });
+            }
+        },
+        getListVoucherByCode: (req, res) => {
+            try {
+                if (req.user) {
+                    let hostId = req.user.hostId || req.user._id;
+                    let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
+                    let page = req.params.page || 0; // trang
+                    let keyword = req.query.keyword || "";
+                    let garageSelected = req.query.garageSelected || "";
+                    if (perPage === 0 || page === 0) {
+                        WareHouseReceipt.find({
+                            $and: [
+                                {
+                                    $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
+                                },
+                                { "code": { $regex: keyword } },
+                                { "totalAmountOwed": { $gte: 0} },
+                                { "recordStatus": 1 },
+                                { "hostId": hostId },
+                            ]
+                        }).exec((err, items) => {
+                            WareHouseReceipt.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                                if (err) {
+                                    return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
+                                }
+                                return res.json({ s: 0, msg: "Thành công", data: items });
+                            });
+                        });
+                    }
+                    else {
+                        WareHouseReceipt.find({
+                            $and: [
+                                {
+                                    $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
+                                },
+                                { "code": { $regex: keyword } },
+                                { "totalAmountOwed": { $gte: 0} },
+                                { "recordStatus": 1 },
+                                { "hostId": hostId },
+                            ]
+                        }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                            WareHouseReceipt.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                                if (err) {
+                                    return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
+                                }
+                                return res.json({ s: 0, msg: "Thành công", data: items });
+                            });
+                        });
+                    }
+
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
             }
         },
     };
