@@ -17,11 +17,15 @@ function CarCateController() {
                 let hostId= req.user.hostId||req.user._id;
                 let garageSelected =req.query.garageSelected||"";
                 let keyword =req.query.keyword||"";
+                let autoMarketCode = req.query.autoMarketCode||"";
                 CarCate.find({
                     $and: [
                         {
                             $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
                         },
+                        (autoMarketCode)?{
+                            "autoMarket.code":autoMarketCode
+                        }:{},
                         {"recordStatus":1, "hostId":hostId}
                     ]
                 }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
@@ -49,11 +53,16 @@ function CarCateController() {
                 let page = req.query.page || 1; // trang
                 let hostId = CarCate.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let keyword = req.query.keyword||"";
+                let autoMarketCode = req.query.autoMarketCode||"";
+                
                 CarCate.findOne({
                     $and: [
                         {
                             $or:[{ "_id" : ObjectId.isValid(keyword)?CarCate.ObjectId(keyword):null},{ "code" : keyword}]
                         },
+                        (autoMarketCode)?{
+                            "autoMarket.code":autoMarketCode
+                        }:{},
                         {"recordStatus":1, "hostId":hostId}
                     ]
                 }).then(result=>{
