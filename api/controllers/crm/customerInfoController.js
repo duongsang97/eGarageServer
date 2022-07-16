@@ -92,6 +92,34 @@ function CustomerInfoController() {
                 res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
             }
         },
+        getOneByPhoneNumber: (req, res) => {
+            try {
+                if (req.user) {
+                    let hostId = CustomerInfo.ObjectId(req.user.hostId || req.user._id); // lấy dữ liệu của chủ garage
+                    let keyword = req.query.keyword || "";
+                    CustomerInfo.findOne({
+                        $and: [
+                            { "phoneNumber": keyword },
+                            { "recordStatus": 1, "hostId": hostId }
+                        ]
+                    }).then(result => {
+
+                        if (result) {
+                            return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
+                        }
+                        else {
+                            res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                        }
+                    });
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
         create: async (req, res) => {
             try {
                 if (req.user && req.body) {

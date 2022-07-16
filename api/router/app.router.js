@@ -79,6 +79,7 @@ router.route('/customerinfo').get(customerInfoController.list).post(customerInfo
 router.route('/customerinfo/exportexcel').get(customerInfoController.exportExcel);
 router.route('/customerinfo/exporttemplateexcel').get(customerInfoController.exportTemplateExcel);
 router.route('/customerinfo/getone').get(customerInfoController.getOne);
+router.route('/customerinfo/getonebyphonenumber').get(customerInfoController.getOneByPhoneNumber);
 
 router.route('/promotion').get(promotionController.list).post(promotionController.create)
 .put(promotionController.update).delete(promotionController.delete);
