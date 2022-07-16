@@ -22,48 +22,25 @@ function BillController() {
                     let page = req.params.page || 0; // trang
                     let keyword = req.query.keyword || "";
                     let garageSelected = req.query.garageSelected || "";
-                    if (perPage === 0 || page === 0) {
-                        Bill.find({
-                            $and: [
-                                {
-                                    $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
-                                },
-                                {
-                                    $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
-                                },
-                                { "recordStatus": 1 },
-                                { "hostId": hostId },
-                            ]
-                        }).exec((err, items) => {
-                            Bill.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
-                                if (err) {
-                                    return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
-                                }
-                                return res.json({ s: 0, msg: "Thành công", data: items });
-                            });
+                    Bill.find({
+                        $and: [
+                            {
+                                $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
+                            },
+                            {
+                                $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                            },
+                            { "recordStatus": 1 },
+                            { "hostId": hostId },
+                        ]
+                    }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                        Bill.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                            if (err) {
+                                return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
+                            }
+                            return res.json({ s: 0, msg: "Thành công", data: items });
                         });
-                    }
-                    else {
-                        Bill.find({
-                            $and: [
-                                {
-                                    $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
-                                },
-                                {
-                                    $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
-                                },
-                                { "recordStatus": 1 },
-                                { "hostId": hostId },
-                            ]
-                        }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
-                            Bill.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
-                                if (err) {
-                                    return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
-                                }
-                                return res.json({ s: 0, msg: "Thành công", data: items });
-                            });
-                        });
-                    }
+                    });
 
                 }
                 else {

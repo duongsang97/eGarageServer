@@ -42,6 +42,10 @@ const billController = require("../controllers/bills/billController");
 //common
 const commonController = require("../controllers/commonController");
 
+// api ticket
+const ticketController = require("../controllers/tickets/ticketController");
+
+
 const dateFormat = require('date-format');
 const fs = require('fs');
 //cấu hình lưu trữ file khi upload xong
@@ -194,6 +198,9 @@ router.route('/carcate/getOne').get(CarCateController.getOne);
 // api quản lý xe
 router.route('/vehicle').get(VehicleController.list).post(VehicleController.create).put(VehicleController.update); // phiếu nhập
 router.route('/vehicle/getOne').get(VehicleController.getOne);
+
+// api ticket
+router.route('/ticket/booking').post(ticketController.booking);
 
 // trả về 404 nếu không có trong router
 router.get('*', function(req, res){ res.status(404).send(':) Not Found')});

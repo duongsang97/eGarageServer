@@ -6,6 +6,9 @@ const Ticket = mongoose.Schema(
   {
     recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
     code: { type: String, index: { unique: true }}, // mã 
+    appointmentTime: {type: Date}, // thời gia đặt lịch
+    appointmentTimeInt: {type: Number}, // thời gian đặt lịch int format
+    appointmentNote: {type: String}, // ghi chú lúc đặt lịch
     // thông tin khách hàng
     licensePlates: {type: String}, // biển số xe
     customer:{type: Object}, // đối tượng khách hàng {"customer":{"code":"mã khách hàng","name":"tên khách hàng"}}
@@ -17,7 +20,6 @@ const Ticket = mongoose.Schema(
     //
     vehicle:{type:Object}, // thông tin xe
     receiveForVehicle:{type: Array}, // các đồ vật nhận khi tiếp nhận xe
-
     process:{type:Object,default:serverData.ticketProcess[0]}, // trạng thái ticket mặc định đặt lịch
     executors:{type:Array}, // người thực hiện [{"code":"mã nhân viên","name":"tên nhân viên"}]
     executorsFeedback:{type: Object}, // ghi chú của nhân viên kỹ thuật
@@ -25,7 +27,9 @@ const Ticket = mongoose.Schema(
     level:{type:Number}, // 0,1,2,3 --> số càng cao ưu tiên càng lớn
     receivedDate:{type:Date}, // ngày nhận
     estimatedFinishDate:{type:Date}, // ngày bàn giao dự kiến
-    changeHistory:{type: Array}, // lịch sử chỉnh sửa
+    changeHistory:{type: Array}, // lịch sử chỉnh sửa 
+
+    ofGarage:{type:Object}, // làm việc ở garage nào. {code,name}
     billInfo: {type: mongoose.Types.ObjectId, ref: 'g_Bill'}, // thông tin bill đi kèm
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo

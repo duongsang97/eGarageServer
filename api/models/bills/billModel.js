@@ -13,7 +13,9 @@ const Bill = mongoose.Schema(
     discountType :{type:Object}, // loại chiết khấu lấy từ masterdata 
     discountUnit:{type:Object}, // kiểu giảm giá, tiền mặt hoặc % dư liệu lấy từ masterdata // nếu discountType chọn thủ công --> mới có tác dụng
     discountValue:{type:Number}, // giá trị giảm nếu discountType chọn thủ công --> mới có tác dụng
-    insurance:{type:Object}, // thông tin bảo hiểm
+    voucherApply:{type: Array}, // danh sách mã khuyễn mãi được app dụng, discountType chọn tự động --> mới có tác dụng
+    voucherValue:{type:Number}, // giá trị giảm tổng voucher ,  discountType chọn tự động --> mới có tác dụng
+    insurance:{type:Object}, // thông tin bảo hiểm 
     tax:{type:Number}, //thuế tính theo %
     prepaidExpenses:{type: Number}, // tổng tiền trước thuế
     discountFinal:{type: Number}, // tổng số tiền được giảm trừ
@@ -27,7 +29,6 @@ const Bill = mongoose.Schema(
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
     note:  { type: String}, // ghi chú 
-
     //Thịnh add
     totalAmountOwed:{type: Number}, // tổng số còn nợ
   },
