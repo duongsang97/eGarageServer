@@ -19,26 +19,20 @@ function TicketController() {
                 let hostId= req.user.hostId||req.user._id;
                 let garageSelected =req.query.garageSelected||"";
                 let keyword =req.query.keyword||"";
-                Ticket.aggregate([
-                    {
-                        $match:{
-                            $and: [
-                                {
-                                    $or:[{ "name" : { $regex: keyword}},{ "code" : { $regex: keyword}}]
-                                },
-                                {"recordStatus":1, "hostId": Ticket.ObjectId(hostId)}
-                            ]
+                let fromDate = (req.query.fromDate)?new Date(req.query.fromDate):new Date().now;
+                let toDate = (req.query.toDate)?new Date(req.query.toDate):new Date().now;
+                Ticket.find({
+                    $and: [
+                        {
+                            $or:[{ "licensePlates" : { $regex: keyword}},{ "code" : { $regex: keyword}},{ "phoneNumber" : { $regex: keyword}}]
+                        },
+                        
+                        {
+                            "recordStatus":1, "hostId":hostId,
+                           
                         }
-                    },
-                    {
-                        $lookup:{
-                            from: "g_carcates", // collection name in db
-                            localField: "code",
-                            foreignField: "autoMarket.code",
-                            as: "carCates"
-                        }
-                    },
-                ]).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                    ]
+                }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
                     Ticket.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
