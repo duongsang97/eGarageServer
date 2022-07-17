@@ -182,13 +182,12 @@ function TicketController() {
                 req.body.updatedBy = Ticket.ObjectId(req.user._id);
                 req.body.hostId = Ticket.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let garageSelected =req.query.garageSelected||"";
-
                 if(!req.body.code){
                     req.body.code = await Ticket.GenerateKeyCode();
                 }
                 var ticketChecker = await Ticket.find({"recordStatus":1, "hostId": Ticket.ObjectId(req.body.hostId),"licensePlates":req.body.licensePlates,"appointmentTime":req.body.appointmentTime});
                 if(!ticketChecker || ticketChecker.length <=0){
-                    req.body.appointmentTimeInt = dateFormat('yyyyMMdd', req.body.appointmentTime); 
+                    req.body.appointmentTimeInt = dateFormat('yyyyMMdd',new Date(req.body.appointmentTime)); 
                     let createbyName = (req.user.profile.lastName)+" "+(req.user.profile.firstName);
                     req.body.changeHistory =[{"createdAt":Date.now,"createdIdBy":req.body.createdBy,"createdNameBy":createbyName,"action":"Khởi tạo lịch hẹn"}];
                     Ticket.create(req.body, function (err, small) {
@@ -216,7 +215,7 @@ function TicketController() {
             }
         }
         catch(ex){
-            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
+            res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex.toString()});
         }
     }
   };

@@ -86,7 +86,7 @@ function BillController() {
                 if (req.user && req.body) {
                     let hostId = req.user.hostId || req.user._id;
                     req.body.createdBy = Bill.ObjectId(req.user._id);
-                    req.body.createdDate = Date.now();
+                    req.body.updatedBy = Bill.ObjectId(req.user._id);
                     req.body.hostId = Bill.ObjectId(hostId);
                     req.body.totalAmountOwed = req.body.totalCost || 0;
                     if (!req.body.code) {
