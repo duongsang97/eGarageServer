@@ -24,7 +24,7 @@ const Ticket = mongoose.Schema(
     executors:{type:Array}, // người thực hiện [{"code":"mã nhân viên","name":"tên nhân viên"}]
     executorsFeedback:{type: Object}, // ghi chú của nhân viên kỹ thuật
 
-    level:{type:Number}, // 0,1,2,3 --> số càng cao ưu tiên càng lớn
+    level:{type:Number,default:0}, // 0,1,2,3 --> số càng cao ưu tiên càng lớn
     receivedDate:{type:Date}, // ngày nhận
     estimatedFinishDate:{type:Date}, // ngày bàn giao dự kiến
     changeHistory:{type: Array}, // lịch sử chỉnh sửa 

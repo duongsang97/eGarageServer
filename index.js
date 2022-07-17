@@ -1,3 +1,4 @@
+process.env.TZ = 'Asia/Ho_Chi_Minh'
 var express = require("express");
 const helmet = require("helmet"); // Security Http Request
 const bodyParser = require("body-parser");
