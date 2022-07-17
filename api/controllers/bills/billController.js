@@ -141,7 +141,6 @@ function BillController() {
                     else {
                         res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                     }
-
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
