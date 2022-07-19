@@ -8,7 +8,6 @@ const BankAccount = mongoose.Schema(
         recordStatus: { type: Number, enum: serverData.recordStatus, default: serverData.recordStatus[1] }, // trạng thais của bản ghi , 1 là hoạt động , 0 đã xóa
         hostId: { type: mongoose.Types.ObjectId, ref: 'g_User' }, // thông tin chủ sở hữu
         ofGarage: { type: Object }, // của garage nào
-
         code: { type: String, index: { unique: true } }, // mã  
         name: { type: String }, //Tên ngân hàng
         bankName: { type: String }, //Tên ngân hàng

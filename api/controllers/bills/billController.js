@@ -33,12 +33,24 @@ function BillController() {
                             { "recordStatus": 1 },
                             { "hostId": hostId },
                         ]
-                    }).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                    }).sort({"updatedBy":-1}).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
                         Bill.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                             if (err) {
                                 return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
                             }
-                            return res.json({ s: 0, msg: "Thành công", data: items });
+                            let _data =[];
+                            items.forEach((e)=>{
+                                let _temp = {...e["_doc"]};
+                                _temp["paymentStatus"] = 0; // chưa thanh toán
+                                if(_temp.totalAmountOwed == 0){
+                                    _temp["paymentStatus"] = 1; // đã thanh toán
+                                }
+                                else if(_temp.totalAmountOwed < _temp.totalCost && _temp.totalAmountOwed != 0){
+                                    _temp["paymentStatus"] = -1; // đang nợ
+                                }
+                                _data.push(_temp);
+                            });
+                            return res.json({ s: 0, msg: "Thành công", data: _data||[] });
                         });
                     });
 
