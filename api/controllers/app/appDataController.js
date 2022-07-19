@@ -28,6 +28,8 @@ function AppDataController() {
                     break;
                 case "discountUnit": 
                     data = AppData.discountUnit;
+                case "ticketProcess": 
+                    data = AppData.ticketProcess;
             }
             res.json({ s: 0, msg: "Thành công" ,data:data});
         }
