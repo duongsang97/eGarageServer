@@ -25,11 +25,13 @@ function AppDataController() {
                 break;
                 case "discountType": 
                     data = AppData.discountType;
-                    break;
+                break;
                 case "discountUnit": 
                     data = AppData.discountUnit;
+                break;
                 case "ticketProcess": 
                     data = AppData.ticketProcess;
+                break;
             }
             res.json({ s: 0, msg: "Thành công" ,data:data});
         }
