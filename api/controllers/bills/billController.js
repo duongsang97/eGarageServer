@@ -78,7 +78,15 @@ function BillController() {
                     }).then(result => {
                         
                         if (result) {
-                            return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
+                            let _temp = {...result["_doc"]};
+                            _temp["paymentStatus"] = 0; // chưa thanh toán
+                                if(_temp.totalAmountOwed == 0){
+                                    _temp["paymentStatus"] = 1; // đã thanh toán
+                                }
+                                else if(_temp.totalAmountOwed < _temp.totalCost && _temp.totalAmountOwed != 0){
+                                    _temp["paymentStatus"] = -1; // đang nợ
+                                }
+                            return res.json({ s: 0, msg: "Thành công", data: _temp || {}, listCount: (_temp || {}).length });
                         }
                         else{
                             res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
