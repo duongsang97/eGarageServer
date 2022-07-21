@@ -22,8 +22,8 @@ const Ticket = mongoose.Schema(
     receiveForVehicle:{type: Array}, // các đồ vật nhận khi tiếp nhận xe
     process:{type:Object,default:serverData.ticketProcess[0]}, // trạng thái ticket mặc định đặt lịch
     executors:{type:Array}, // người thực hiện [{"code":"mã nhân viên","name":"tên nhân viên"}]
-    executorsFeedback:{type: Object}, // ghi chú của nhân viên kỹ thuật
-
+    executorsFeedback:{type: Array}, // ghi chú của nhân viên kỹ thuật
+    executorsNote: {type:String}, // free text
     level:{type:Number,default:0}, // 0,1,2,3 --> số càng cao ưu tiên càng lớn
     receivedDate:{type:Date}, // ngày nhận
     estimatedFinishDate:{type:Date}, // ngày bàn giao dự kiến
@@ -67,7 +67,7 @@ module.exports = {
 
 /// receiveForVehicle
 // {
-//        "code":"mã"
+//     "code":"mã"
 //     "name":"Tên vật phẩm, tài liệu khi nhận",
 //     "values":"số lượng, giá trị",
 //     "note":"ghi chú",
@@ -75,8 +75,7 @@ module.exports = {
 // }
 
 //executorsFeedback
-// {
-//     "feedback":[
+// [
 //         {
 //             "code":"mã",
 //             "name":"Tên vật phẩm, tài liệu khi nhận",
@@ -91,8 +90,7 @@ module.exports = {
 //             "note":"ghi chú",
 //             "images":["link hình1","link hình 2"] 
 //         }
-//     ],
-//     "note":"ghi chú tổng thể"
+//  ],
 // }
 
 //message

@@ -200,7 +200,8 @@ router.route('/vehicle').get(VehicleController.list).post(VehicleController.crea
 router.route('/vehicle/getOne').get(VehicleController.getOne);
 
 // api ticket
-router.route('/ticket').get(ticketController.list);
+router.route('/ticket').get(ticketController.list).post(ticketController.create).put(ticketController.update); // ticket;
+router.route('/ticket/getOne').get(ticketController.getOne);
 router.route('/ticket/booking').post(ticketController.booking);
 
 // trả về 404 nếu không có trong router

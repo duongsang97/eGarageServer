@@ -3,6 +3,7 @@ const Ticket = require("../../models/tickets/ticketModel").Ticket;
 const Garage = require("../../models/garages/garageModel").Garage;
 const ObjectId = require('mongoose').Types.ObjectId;
 const dateFormat = require('date-format');
+const serverData = require("../../data/serverData");
 function TicketController() {
   return {
     /** @memberOf TicketManagerController
@@ -82,7 +83,35 @@ function TicketController() {
     },
     create: async (req, res) => {
         try{
-            
+            if(req.user && (req.body)){
+                req.body.createdBy = Ticket.ObjectId(req.user._id);
+                req.body.updatedBy = Ticket.ObjectId(req.user._id);
+                req.body.hostId = Ticket.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                if(!req.body.code){
+                    req.body.code = await Ticket.GenerateKeyCode();
+                }
+                if(!req.body.process){
+                    req.body.process = serverData.ticketProcess[1];
+                }
+                Ticket.create(req.body, function (err, small) {
+                    if (err){
+                        let errMsg ="";
+                        if(err.code === 11000){
+                            errMsg="Trùng mã";
+                        }
+                        else{
+                            errMsg=err;
+                        }
+                        return res.json({ s: 1, msg: errMsg,data:null });
+                    }
+                    else{
+                        return res.json({ s: 0, msg: "Thành công",data:small});
+                    }
+                  });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
         }
         catch(ex){
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
@@ -90,9 +119,28 @@ function TicketController() {
     },
     update: (req, res) => {
         try{
+            if(req.user && (req.body && req.body.hasOwnProperty("code"))){
+                req.body.updatedBy = Ticket.ObjectId(req.user._id);
+                req.body.hostId = Ticket.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
+                // kiểm tra nếu dữ liệu thuộc garage --> mới dc cập nhật
+                Ticket.findByIdAndUpdate(req.body._id,req.body, function (err, small) {
+                    if (err){
+                        let errMsg =err;
+                        return res.json({ s: 1, msg: errMsg,data:null });
+                    }
+                    else{
+                        if(!small){
+                            return res.json({ s: 1, msg: "Không tìm thấy dữ liệu",data:null});
+                        }
+                        return res.json({ s: 0, msg: "Thành công",data:small});
+                    }
+                  });
+            }
+            else{
+                res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
+            }
         }
         catch(ex){
-            console.log(ex);
             res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu" ,data:ex});
         }
     },
