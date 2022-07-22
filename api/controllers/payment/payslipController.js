@@ -107,8 +107,9 @@ function PayslipController() {
                     req.body.createdDate = Date.now();
                     req.body.hostId = Payslip.ObjectId(hostId);
 
+                    var tempItem = {};
                     if (req.body.reason && req.body.reason.code === '01') {
-                        let tempItem = await WareHouseReceipt.findOne({ "code": req.body.voucherCode, "recordStatus": 1 });
+                        let tempItem = await WareHouseReceipt.findOne({ "voucherNumber": req.body.voucherCode, "recordStatus": 1 });
                         if (!tempItem) {
                             return res.json({ s: 1, msg: "Không tìm thấy phiếu xuất [" + req.body.voucherCode + "] trong hệ thống!", data: null });
                         }

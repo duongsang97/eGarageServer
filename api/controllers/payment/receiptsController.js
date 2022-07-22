@@ -108,6 +108,7 @@ function ReceiptsController() {
                     req.body.hostId = Receipts.ObjectId(hostId);
 
 
+                    var tempItem = {};
                     if (req.body.reason && req.body.reason.code === '01') {
                         //kiểm tra có tồn tại mã hóa đơn k
                         let tempItem = await Bill.findOne({ "code": req.body.billCode, "recordStatus": 1 });
