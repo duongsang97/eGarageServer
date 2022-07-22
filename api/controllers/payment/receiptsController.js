@@ -82,11 +82,11 @@ function ReceiptsController() {
                             { "recordStatus": 1, "hostId": hostId }
                         ]
                     }).then(result => {
-                        
+
                         if (result) {
                             return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
                         }
-                        else{
+                        else {
                             res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                         }
                     });
@@ -107,20 +107,24 @@ function ReceiptsController() {
                     req.body.createdDate = Date.now();
                     req.body.hostId = Receipts.ObjectId(hostId);
 
-                    //kiểm tra có tồn tại mã hóa đơn k
-                    let tempItem = await Bill.findOne({ "code": req.body.billCode, "recordStatus": 1 });
-                    if (!tempItem) {
-                        return res.json({ s: 1, msg: "Không tìm thấy hóa đơn ["+req.body.billCode+"] trong hệ thống!", data: null });
+
+                    if (req.body.reason && req.body.reason.code === '01') {
+                        //kiểm tra có tồn tại mã hóa đơn k
+                        let tempItem = await Bill.findOne({ "code": req.body.billCode, "recordStatus": 1 });
+                        if (!tempItem) {
+                            return res.json({ s: 1, msg: "Không tìm thấy hóa đơn [" + req.body.billCode + "] trong hệ thống!", data: null });
+                        }
+                        if (tempItem.totalAmountOwed <= 0) {
+                            return res.json({ s: 1, msg: "Hóa đơn này đã hoàn thành thanh toán!", data: null });
+                        }
+
+                        tempItem.totalAmountOwed -= req.body.amount;
+                        if (tempItem.totalAmountOwed < 0) {
+                            return res.json({ s: 1, msg: "Số tiền cần thanh toán không được lớn hơn số tiền cần phải trả!", data: null });
+                        }
+
                     }
-                    if (tempItem.totalAmountOwed <= 0) {
-                        return res.json({ s: 1, msg: "Hóa đơn này đã hoàn thành thanh toán!", data: null });
-                    }
-                    
-                    tempItem.totalAmountOwed -= req.body.amount;
-                    if(tempItem.totalAmountOwed < 0){
-                        return res.json({ s: 1, msg: "Số tiền cần thanh toán không được lớn hơn số tiền cần phải trả!", data: null });
-                    }
-                    
+
                     if (!req.body.code) {
                         req.body.code = await Receipts.GenerateKeyCode();
                     }
@@ -136,22 +140,26 @@ function ReceiptsController() {
                             return res.json({ s: 1, msg: errMsg, data: null });
                         }
                         else {
-                            if(small){
-                                Bill.findByIdAndUpdate(tempItem._id, tempItem, function (err2, doc2, re2) {
-                                    if (err2) {
-                                        return res.json({ s: 1, msg: "Thất bại", data: err2 });
-                                    }
-                                    else {
-                                        if(doc2){
-                                            return res.json({ s: 0, msg: "Thành công", data: small });
+                            if (small) {
+
+                                if (small.reason && small.reason.code === '01') {
+                                    Bill.findByIdAndUpdate(tempItem._id, tempItem, function (err2, doc2, re2) {
+                                        if (err2) {
+                                            return res.json({ s: 1, msg: "Thất bại", data: err2 });
                                         }
                                         else {
-                                            res.json({ s: 1, msg: "không tìm thấy dữ liệu hóa đơn", data: null });
+                                            if (doc2) {
+                                                return res.json({ s: 0, msg: "Thành công", data: small });
+                                            }
+                                            else {
+                                                res.json({ s: 1, msg: "không tìm thấy dữ liệu hóa đơn", data: null });
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
+
                             }
-                            else{
+                            else {
                                 return res.json({ s: 1, msg: "Đã có lỗi xảy ra!", data: small });
                             }
                         }
@@ -177,7 +185,7 @@ function ReceiptsController() {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
                             else {
-                                if(doc){
+                                if (doc) {
                                     return res.json({ s: 0, msg: "Thành công", data: doc });
                                 }
                                 else {
@@ -259,7 +267,7 @@ function ReceiptsController() {
                                     $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
                                 },
                                 { "customer.numberPhone": { $regex: keyword } },
-                                { "totalAmountOwed": { $gte: 1} },
+                                { "totalAmountOwed": { $gte: 1 } },
                                 { "recordStatus": 1 },
                                 { "hostId": hostId },
                             ]
@@ -279,7 +287,7 @@ function ReceiptsController() {
                                     $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
                                 },
                                 { "customer.numberPhone": { $regex: keyword } },
-                                { "totalAmountOwed": { $gte: 1} },
+                                { "totalAmountOwed": { $gte: 1 } },
                                 { "recordStatus": 1 },
                                 { "hostId": hostId },
                             ]

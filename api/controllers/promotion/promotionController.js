@@ -21,6 +21,7 @@ function PromotionController() {
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
                     let keyword = req.query.keyword || "";
+                    let garageSelected =req.query.garageSelected||"";
                     if (perPage === 0 || page === 0) {
                         Promotion.find({
                             $and: [
