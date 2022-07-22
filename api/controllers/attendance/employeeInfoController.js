@@ -23,15 +23,20 @@ function ProfileController() {
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
                     let keyword = req.query.keyword || "";
+                    let positionCode = req.query.positionCode || "";
+                    let query = [
+                        {
+                            $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                        },
+                        { "recordStatus": 1 },
+                        { "hostId": hostId },
+                    ]
+                    if(positionCode){
+                        query.push({"position.code": positionCode})
+                    }
                     if (perPage === 0 || page === 0) {
                         Profile.find({
-                            $and: [
-                                {
-                                    $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
-                                },
-                                { "recordStatus": 1 },
-                                { "hostId": hostId },
-                            ]
+                            $and: query
                         }).exec((err, items) => {
                             Profile.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                                 if (err) {

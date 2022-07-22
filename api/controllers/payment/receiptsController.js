@@ -157,6 +157,9 @@ function ReceiptsController() {
                                         }
                                     });
                                 }
+                                else{
+                                    return res.json({ s: 0, msg: "Thành công", data: small });
+                                }
 
                             }
                             else {
