@@ -20,7 +20,7 @@ const Profile = mongoose.Schema(
     //thịnh thêm
 
     workPlace: { type: Object }, //nơi làm việc
-    positon: { type: Object }, // vị trí
+    position: { type: Object }, // vị trí
     workType: { type: Object }, // hình thức làm việc
     workStatus: { type: Object }, //trạng thái làm việc
     idNo: { type: String }, //cmnd/cccd
@@ -84,6 +84,10 @@ Profile.statics.Validation = function (data) {
   if(!data.phoneNumber || data.phoneNumber === ''){
     if(mess !== '') mess += ', ';
     mess += 'Số điện thoại không được để trống';
+  }
+  if(!data.email || data.email === ''){
+    if(mess !== '') mess += ', ';
+    mess += 'Mail không được để trống';
   }
   return mess;
 };
