@@ -21,16 +21,23 @@ function PromotionController() {
                     let perPage = req.params.perPage || 0; // số lượng sản phẩm xuất hiện trên 1 page
                     let page = req.params.page || 0; // trang
                     let keyword = req.query.keyword || "";
-                    let garageSelected =req.query.garageSelected||"";
+                    let garageSelected = req.query.garageSelected || "";
+                    let query = [
+                        {
+                            $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                        },
+                        { "recordStatus": 1 },
+                        { "hostId": hostId },
+                    ]
+                    if (garageSelected) {
+                        query.push(
+                            {
+                                $or: [{ "isAllGarage": 1 }, { "garages": { $elemMatch: { code: garageSelected } } }]
+                            })
+                    }
                     if (perPage === 0 || page === 0) {
                         Promotion.find({
-                            $and: [
-                                {
-                                    $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
-                                },
-                                { "recordStatus": 1 },
-                                { "hostId": hostId },
-                            ]
+                            $and: query
                         }).exec((err, items) => {
                             Promotion.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                                 if (err) {
@@ -65,6 +72,50 @@ function PromotionController() {
                 res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
             }
         },
+        listByDateNow: (req, res) => {
+            try {
+                if (req.user) {
+                    let hostId = req.user.hostId || req.user._id;
+                    let keyword = req.query.keyword || "";
+                    let garageSelected = req.query.garageSelected || "";
+                    var now = new Date();
+                    let query = [
+                        {
+                            $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
+                        },
+                        { "recordStatus": 1 },
+                        { "hostId": hostId },
+                        { "toDate": { $gte: now } },
+                        { "fromDate": { $lte: now } },
+                        {
+                            $or: [{ "promotionType.code": "01" }, { "promotionType.code": "02" }]
+                        },
+                    ]
+                    if (garageSelected) {
+                        query.push(
+                            {
+                                $or: [{ "isAllGarage": 1 }, { "garages": { $elemMatch: { code: garageSelected } } }]
+                            })
+                    }
+                    Promotion.find({
+                        $and: query
+                    }).exec((err, items) => {
+                        Promotion.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                            if (err) {
+                                return res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: err });
+                            }
+                            return res.json({ s: 0, msg: "Thành công", data: items });
+                        });
+                    });
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: null });
+            }
+        },
         getOne: (req, res) => {
             try {
                 if (req.user) {
@@ -78,13 +129,13 @@ function PromotionController() {
                             { "recordStatus": 1, "hostId": hostId }
                         ]
                     }).then(result => {
-                        if(result){
+                        if (result) {
                             return res.json({ s: 0, msg: "Thành công", data: result || {}, listCount: (result || {}).length });
                         }
                         else {
                             res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                         }
-                        
+
                     });
                 }
                 else {
@@ -166,7 +217,7 @@ function PromotionController() {
         update: (req, res) => {
             try {
                 if (req.user && req.body) {
-                    if(req.body._id && ObjectId.isValid(req.body._id)){
+                    if (req.body._id && ObjectId.isValid(req.body._id)) {
                         req.body.updatedBy = Promotion.ObjectId(req.user._id);
                         //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
                         Promotion.findByIdAndUpdate(req.body._id, req.body, function (err, doc, re) {
@@ -174,7 +225,7 @@ function PromotionController() {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
                             else {
-                                if(doc){
+                                if (doc) {
                                     return res.json({ s: 0, msg: "Thành công", data: doc });
                                 }
                                 else {
@@ -186,7 +237,7 @@ function PromotionController() {
                     else {
                         res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
                     }
-                   
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
@@ -201,13 +252,13 @@ function PromotionController() {
                 if (req.user && req.body) {
                     req.body.updatedBy = Promotion.ObjectId(req.user._id);
                     //delete req.body[createdBy]; // xóa ko cho cập nhật tránh lỗi mất dữ liệu người dùng
-                    if(req.body._id && ObjectId.isValid(req.body._id)){
+                    if (req.body._id && ObjectId.isValid(req.body._id)) {
                         Promotion.findById(req.body._id, function (err, doc) {
                             if (err) {
                                 return res.json({ s: 1, msg: "Thất bại", data: err });
                             }
                             else {
-                                if(doc){
+                                if (doc) {
                                     doc.recordStatus = 0;
                                     Promotion.findByIdAndUpdate(req.body._id, doc, function (err, doc, re) {
                                         if (err) {
@@ -215,7 +266,7 @@ function PromotionController() {
                                         }
                                         else {
                                             doc.recordStatus = 0;
-        
+
                                             return res.json({ s: 0, msg: "Thành công", data: doc });
                                         }
                                     });
@@ -226,7 +277,7 @@ function PromotionController() {
                             }
                         });
                     }
-                    
+
                 }
                 else {
                     res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });

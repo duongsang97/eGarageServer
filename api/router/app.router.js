@@ -104,6 +104,8 @@ router.route('/promotion').get(promotionController.list).post(promotionControlle
 router.route('/promotion/getone').get(promotionController.getOne);
 router.route('/promotion/getpromotiontype').get(promotionController.getPromotionType);
 router.route('/promotion/getvaluetype').get(promotionController.getValueType);
+router.route('/promotion/listbydatenow').get(promotionController.listByDateNow);
+
 
 router.route('/servicecate').get(serviceCateController.list).post(serviceCateController.create).put(serviceCateController.update);
 router.route('/service').get(serviceController.list).post(serviceController.create).put(serviceController.update);
