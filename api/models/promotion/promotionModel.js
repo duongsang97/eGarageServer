@@ -17,6 +17,7 @@ const Promotion = mongoose.Schema(
     promotionType: { type: Object}, //Loại khuyến mãi
     target: { type: Number}, //định mức khuyến mãi
     value: { type: Number}, //giá trị khuyến mãi
+    maxValue: { type: Number}, //Số tiền được giảm tối đa
     valueType: { type: Object}, //Loại giá trị
     products: { type: Object}, // Ds sp khuyến mãi - sp combo
     note: { type: String}, 

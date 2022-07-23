@@ -167,6 +167,7 @@ router.route('/receipts/getListBillByPhonenumber').get(receiptsController.getLis
 router.route('/bill').get(billController.list).post(billController.create)
 .put(billController.update).delete(billController.delete);
 router.route('/bill/getone').get(billController.getOne);
+router.route('/bill/calculatebill').get(billController.calculateBill);
 
 
 

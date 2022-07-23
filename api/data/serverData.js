@@ -18,7 +18,7 @@ module.exports = {
     pathExceltmp: "excel/tmp",
     pathSaveFile: "upload",
     promotionType:[
-        {code:"01",name:"Giảm giá sản phẩm/dịch vụ"},
+        {code:"01",name:"Giảm giá hóa đơn"},
         {code:"02",name:"Giảm giá hóa đơn khi tiêu phí vực mức"},
         {code:"03",name:"Khuyến mãi theo combo"},
         {code:"04",name:"Tích điểm đổi quà"},

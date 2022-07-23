@@ -11,7 +11,7 @@ const GroupCustomer = mongoose.Schema(
     name: { type: String},
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     target: { type: Number, default: 0}, //chỉ tiêu điểm
-    discount: { type: Number, default: 0}, // chiết khấu
+    discount: { type: Number, default: 0}, // chiết khấu %
     note: { type: String}, 
     createdBy: { type: mongoose.Types.ObjectId, ref: 'g_User',immutable: true, select: false}, // liên kêt với profile
     

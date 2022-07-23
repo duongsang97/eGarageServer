@@ -128,7 +128,7 @@ function CustomerInfoController() {
                     req.body.createdDate = Date.now();
                     req.body.hostId = CustomerInfo.ObjectId(hostId);
                     
-                    let tempItem = await CustomerInfo.findOne({ "phoneNumber": eq.body.phoneNumber, "recordStatus": 1 });
+                    let tempItem = await CustomerInfo.findOne({ "phoneNumber": req.body.phoneNumber, "recordStatus": 1 });
                     if (tempItem) {
                         return res.json({ s: 1, msg: "Số điện thoại này đã tồn tại", data: null });
                     }

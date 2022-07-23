@@ -13,10 +13,12 @@ const Bill = mongoose.Schema(
     discountType :{type:Object}, // loại chiết khấu lấy từ masterdata 
     discountUnit:{type:Object}, // kiểu giảm giá, tiền mặt hoặc % dư liệu lấy từ masterdata // nếu discountType chọn thủ công --> mới có tác dụng
     discountValue:{type:Number}, // giá trị giảm nếu discountType chọn thủ công --> mới có tác dụng
-    voucherApply:{type: Array}, // danh sách mã khuyễn mãi được app dụng, discountType chọn tự động --> mới có tác dụng
+    voucherApply:{type: Object}, // danh sách mã khuyễn mãi được app dụng, discountType chọn tự động --> mới có tác dụng
     voucherValue:{type:Number}, // giá trị giảm tổng voucher ,  discountType chọn tự động --> mới có tác dụng
     insurance:{type:Object}, // thông tin bảo hiểm 
     tax:{type:Number}, //thuế tính theo %
+    taxValue:{type:Number}, //Tổng tiền thuế
+    discountByCustomerGroupValue:{type:Number}, //Tổng tiền giảm bởi nhóm KH
     prepaidExpenses:{type: Number}, // tổng tiền trước thuế
     discountFinal:{type: Number}, // tổng số tiền được giảm trừ
     totalCost:{type: Number}, // tổng số tiền bằng số
