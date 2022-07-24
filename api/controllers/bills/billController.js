@@ -193,7 +193,7 @@ function BillController() {
                     }
                     
                     if(data.tax > 0){
-                        data.taxValue = data.totalCost * data.tax / 100;
+                        data.taxValue = data.prepaidExpenses * data.tax / 100;
                         data.totalCost += data.taxValue;
                     }
 
