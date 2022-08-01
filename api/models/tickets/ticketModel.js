@@ -30,7 +30,7 @@ const Ticket = mongoose.Schema(
     changeHistory:{type: Array}, // lịch sử chỉnh sửa 
 
     ofGarage:{type:Object}, // làm việc ở garage nào. {code,name}
-    billInfo: {type: mongoose.Types.ObjectId, ref: 'g_Bill'}, // thông tin bill đi kèm
+    billId: {type: mongoose.Types.ObjectId, ref: 'g_Bill'}, // thông tin bill đi kèm
     hostId: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin chủ sở hữu
     createdBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguòi tạo
     updatedBy: {type: mongoose.Types.ObjectId, ref: 'g_User'}, // thông tin nguời cập nhật cuối
