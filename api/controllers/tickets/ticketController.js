@@ -35,7 +35,7 @@ function TicketController() {
                                 $or:[{"updatedAt":dateQuery},{"appointmentTime":dateQuery}]
                             },
                             {
-                                "recordStatus":1, "hostId":hostId,
+                                "recordStatus":1, "hostId":hostId,"ofGarage":garageSelected
                             }
                             ]
                         }
