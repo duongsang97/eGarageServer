@@ -25,28 +25,30 @@ function TicketController() {
                 let toDate =  new Date((req.query.toDate)?new Date(req.query.toDate).setUTCHours(23,59,59):new Date(fromDate).setUTCHours(23,59,59));
                 let dateQuery ={ $gte:fromDate,$lt:toDate};
                 Ticket.aggregate(
-                {$match:{
-                    $and: [
-                        {
-                            $or:[{ "licensePlates" : { $regex: keyword}},{ "code" : { $regex: keyword}},{ "phoneNumber" : { $regex: keyword}}]
-                        },
-                        {
-                            $or:[{"updatedAt":dateQuery},{"appointmentTime":dateQuery}]
-                        },
-                        {
-                            "recordStatus":1, "hostId":hostId,
+                [
+                    {$match:{
+                        $and: [
+                            {
+                                $or:[{ "licensePlates" : { $regex: keyword}},{ "code" : { $regex: keyword}},{ "phoneNumber" : { $regex: keyword}}]
+                            },
+                            {
+                                $or:[{"updatedAt":dateQuery},{"appointmentTime":dateQuery}]
+                            },
+                            {
+                                "recordStatus":1, "hostId":hostId,
+                            }
+                            ]
                         }
-                        ]
-                    }
-                },
-                {
-                    $lookup:{
-                        from: "g_bills", // collection name in db
-                        localField: "_id",
-                        foreignField: "billId",
-                        as: "billInfo"
-                    }
-                },
+                    },
+                    {
+                        $lookup:{
+                            from: "g_bills", // collection name in db
+                            localField: "_id",
+                            foreignField: "billId",
+                            as: "billInfo"
+                        }
+                    },
+                ]
                 ).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
                     Ticket.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                       if (err){
