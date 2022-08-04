@@ -24,7 +24,8 @@ function TicketController() {
                 let fromDate = new Date((req.query.fromDate)?new Date(req.query.fromDate).setUTCHours(0,0,0):new Date().setUTCHours(0,0,0));
                 let toDate =  new Date((req.query.toDate)?new Date(req.query.toDate).setUTCHours(23,59,59):new Date(fromDate).setUTCHours(23,59,59));
                 let dateQuery ={ $gte:fromDate,$lt:toDate};
-                Ticket.find({
+                Ticket.aggregate(
+                {$match:{
                     $and: [
                         {
                             $or:[{ "licensePlates" : { $regex: keyword}},{ "code" : { $regex: keyword}},{ "phoneNumber" : { $regex: keyword}}]
@@ -35,8 +36,18 @@ function TicketController() {
                         {
                             "recordStatus":1, "hostId":hostId,
                         }
-                    ]
-                }).populate('billId').sort({"level":-1,"updatedAt":1,}).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                        ]
+                    }
+                },
+                {
+                    $lookup:{
+                        from: "g_bills", // collection name in db
+                        localField: "_id",
+                        foreignField: "billId",
+                        as: "billInfo"
+                    }
+                },
+                ).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
                     Ticket.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                       if (err){
                         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
@@ -44,6 +55,26 @@ function TicketController() {
                         return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
                     });
                   });
+                // Ticket.find({
+                //     $and: [
+                //         {
+                //             $or:[{ "licensePlates" : { $regex: keyword}},{ "code" : { $regex: keyword}},{ "phoneNumber" : { $regex: keyword}}]
+                //         },
+                //         {
+                //             $or:[{"updatedAt":dateQuery},{"appointmentTime":dateQuery}]
+                //         },
+                //         {
+                //             "recordStatus":1, "hostId":hostId,
+                //         }
+                //     ]
+                // }).populate('billId').sort({"level":-1,"updatedAt":1,}).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                //     Ticket.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                //       if (err){
+                //         return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
+                //       }
+                //         return res.json({ s: 0, msg: "Thành công",data:items||[] ,listCount: (items||[]).length});
+                //     });
+                //   });
             }
             else{
                 res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
