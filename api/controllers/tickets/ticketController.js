@@ -95,16 +95,36 @@ function TicketController() {
                 let hostId = Ticket.ObjectId(req.user.hostId||req.user._id); // lấy dữ liệu của chủ garage
                 let keyword = req.query.keyword||"";
                 let keySearch= [{ "_id" : Ticket.ObjectId(keyword)},{ "code" : keyword},{ "licensePlates" : { $regex: keyword}},{ "code" : keyword},{ "phoneNumber" :keyword}];
-                Ticket.findOne({
-                    $and:[
-                        {
-                            $or:keySearch
+                
+                Ticket.aggregate(
+                    [
+                        {$match:{
+                            $and:[
+                                {
+                                    $or:keySearch
+                                },
+                                {"recordStatus":1, "hostId": Ticket.ObjectId(hostId)}
+                                ]
+                            }
                         },
-                        {"recordStatus":1, "hostId": Ticket.ObjectId(hostId)}
+                        { $limit: 1 },
+                        {
+                            $lookup:{
+                                from: "g_bills", // collection name in db
+                                localField: "_id",
+                                foreignField: "billId",
+                                as: "billInfo"
+                            }
+                        },
                     ]
-                }).populate('billId').then((result)=>{
-                    return res.json({ s: 0, msg: "Thành công",data:result||{}});
-                })
+                    ).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                        Ticket.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
+                          if (err){
+                            return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
+                          }
+                            return res.json({ s: 0, msg: "Thành công",data:items||{}});
+                        });
+                      });
             }
             else{
                 res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:null });
