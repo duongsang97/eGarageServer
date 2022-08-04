@@ -117,12 +117,12 @@ function TicketController() {
                             }
                         },
                     ]
-                    ).skip((perPage * page) - perPage).limit(perPage).exec((err, items) => {
+                    ).exec((err, items) => {
                         Ticket.countDocuments((err, count) => { // đếm để tính có bao nhiêu trang
                           if (err){
                             return res.json({ s: 1, msg: "không tìm thấy dữ liệu",data:err });
                           }
-                            return res.json({ s: 0, msg: "Thành công",data:items||{}});
+                            return res.json({ s: 0, msg: "Thành công",data:items?items[0]:{}});
                         });
                       });
             }
