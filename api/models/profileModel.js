@@ -10,7 +10,7 @@ const Profile = mongoose.Schema(
     code: { type: String, index: { unique: true } }, // mã NV
     firstName: { type: String },
     lastName: { type: String },
-    gender: { type: Object, default: serverData.gender, default: serverData.gender[0] }, // mật khẩu
+    gender: { type: Object, default: serverData.gender, default: serverData.gender[0] }, 
 
     //email:  { type: String,index: { unique: true }}, 
     //numberPhone:  { type: String}, 
@@ -19,7 +19,7 @@ const Profile = mongoose.Schema(
 
     //thịnh thêm
 
-    workPlace: { type: Object }, //nơi làm việc
+    workPlace: { type: Array }, //nơi làm việc [{code,name}]
     position: { type: Object }, // vị trí
     workType: { type: Object }, // hình thức làm việc
     workStatus: { type: Object }, //trạng thái làm việc
@@ -28,7 +28,6 @@ const Profile = mongoose.Schema(
     idDate: { type: Date }, //ngày cấp
     startingDate: { type: Date }, //ngày bắt đầu làm việc
     endDate: { type: Date }, // ngày kết thúc làm việc
-
     avatar: { type: String }, //ảnh
     imageIDR: { type: String }, //ảnh CMND mặt trước
     imageIDL: { type: String }, //ảnh CMND mặt sau
@@ -38,7 +37,6 @@ const Profile = mongoose.Schema(
     email: { type: String }, // Email
     birthday: { type: Date }, // ngày sinh
     address: { type: String }, // địa chị
-    gender: { type: Object }, //giới tính
 
     //Thông tin TK ngân hàng
     bankNo: { type: String }, // số tk ngân hàng

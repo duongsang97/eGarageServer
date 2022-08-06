@@ -157,7 +157,6 @@ function ProfileController() {
                                 let user = {
                                     recordStatus: 1,
                                     userName: small.idNo,
-                                    password: '123',
                                     status: { code: "active", name: "Kích hoạt" },
                                     userType: { code: "employee", name: "Nhân viên" },
                                     profile: Users.ObjectId(small._id),
