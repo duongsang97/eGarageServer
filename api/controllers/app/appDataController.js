@@ -32,6 +32,9 @@ function AppDataController() {
                 case "ticketProcess": 
                     data = AppData.ticketProcess;
                 break;
+                case "gender": 
+                    data = AppData.gender;
+                break;
             }
             res.json({ s: 0, msg: "Thành công" ,data:data});
         }
