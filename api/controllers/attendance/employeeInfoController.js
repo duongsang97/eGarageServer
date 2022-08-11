@@ -26,6 +26,7 @@ function ProfileController() {
                     let page = req.params.page || 0; // trang
                     let keyword = req.query.keyword || "";
                     let positionCode = req.query.positionCode || "";
+                    let garageSelected = req.query.garageSelected || "";
                     let query = [
                         {
                             $or: [{ "name": { $regex: keyword } }, { "code": { $regex: keyword } }]
@@ -35,6 +36,9 @@ function ProfileController() {
                     ]
                     if (positionCode) {
                         query.push({ "position.code": positionCode })
+                    }
+                    if (garageSelected) {
+                        query.push({ "workPlace": { $elemMatch: { code: garageSelected }}})
                     }
                     if (perPage === 0 || page === 0) {
                         Profile.find({
