@@ -1,5 +1,7 @@
 "use strict";
 const Profile = require("../../models/profileModel").Profile;
+const Position = require("../../models/attendance/positionModel").Position;
+const Garage = require("../../models/garages/garageModel").Garage;
 const Users = require("../../models/userModel").Users;
 var Excel = require('exceljs');
 var formidable = require('formidable');
@@ -31,8 +33,8 @@ function ProfileController() {
                         { "recordStatus": 1 },
                         { "hostId": hostId },
                     ]
-                    if(positionCode){
-                        query.push({"position.code": positionCode})
+                    if (positionCode) {
+                        query.push({ "position.code": positionCode })
                     }
                     if (perPage === 0 || page === 0) {
                         Profile.find({
@@ -61,6 +63,84 @@ function ProfileController() {
                             });
                         });
                     }
+
+                }
+                else {
+                    res.json({ s: 1, msg: "không tìm thấy dữ liệu", data: null });
+                }
+            }
+            catch (ex) {
+                res.json({ s: 1, msg: "Có lỗi xảy ra khi xử lý dữ liệu", data: ex });
+            }
+        },
+
+        dashboard: async (req, res) => {
+            try {
+                if (req.user) {
+                    let hostId = req.user.hostId || req.user._id;
+                    let keyword = req.query.keyword || "";
+                    let garageSelected = req.query.garageSelected || "";
+                    let data1 = [];
+                    let data2 = [];
+                    let data3 = [];
+                    let data4 = [];
+                    let query = [
+                        { "recordStatus": 1 },
+                        { "hostId": hostId },
+                    ]
+                    if (garageSelected) {
+                        query.push({
+                            $or: [{ "ofGarage": {} }, { "ofGarage": null }, { "ofGarage.code": garageSelected }],
+                        })
+                    }
+                    let listEmp = await Profile.find({
+                        $and: query
+                    });
+
+                    let listPosition = await Position.find({
+                        $and: [
+                            { "recordStatus": 1 },
+                            { "hostId": hostId }
+                        ]
+                    });
+
+                    let listGarage = await Garage.find({
+                        $and: [
+                            { "recordStatus": 1 },
+                            { "hostId": hostId }
+                        ]
+                    });
+                    let value1 = 0;
+                    let value2 = 0;
+                    let total = 0;
+                    total = listEmp.length;
+                    let listActive = listEmp.filter(e => e.workStatus.code === '01');
+
+                    value1 = listEmp.filter(e => e.workStatus.code === '01').length;
+                    value2 = listEmp.filter(e => e.workStatus.code === '02').length;
+
+                    data1.push({ code: 'TKNV', name: 'Thống kê Nhân viên', total: total, value1: value1, value2: value2 });
+
+                    total = listActive.length;
+                    value1 = listActive.filter(e => e.workType.code === '01').length;
+                    value2 = listActive.filter(e => e.workType.code === '02').length;
+
+                    data2.push({ code: 'HTLV', name: 'Hình thức làm việc', total: total, value1: value1, value2: value2 });
+
+                    listPosition.forEach(el => {
+                        total = listActive.filter(e => e.position && e.position.code === el.code).length;
+                        value1 = listActive.filter(e => e.position && e.position.code === el.code && e.workType.code === '01').length;
+                        value2 = listActive.filter(e => e.position && e.position.code === el.code && e.workType.code === '02').length;
+                        data3.push({ code: el.code, name: el.name, total: total, value1: value1, value2: value2 });
+                    })
+                    listGarage.forEach(el => {
+                        total = listActive.filter(e => e.workPlace && e.workPlace[0].code == el.code).length;
+                        value1 = listActive.filter(e => e.workPlace && e.workPlace[0].code == el.code && e.workType.code === '01').length;
+                        value2 = listActive.filter(e => e.workPlace && e.workPlace[0].code == el.code && e.workType.code === '02').length;
+                        data4.push({ code: el.code, name: el.name, total: total, value1: value1, value2: value2 });
+                    })
+
+                    return res.json({ s: 0, msg: "Thành công", data1: data1, data2: data2, data3: data3, data4: data4 });
 
                 }
                 else {
